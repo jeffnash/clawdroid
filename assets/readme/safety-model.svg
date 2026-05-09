@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">Clawdroid safety model</title>
+  <desc id="desc">Normal Android actions go through the daemon, while installs, recovery, and protected operations require approval gates.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbf8"/>
+      <stop offset="0.55" stop-color="#f3f9f5"/>
+      <stop offset="1" stop-color="#fff7ee"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-18%" y="-24%" width="136%" height="148%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#44201f" flood-opacity="0.11"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#347e68"/>
+    </marker>
+    <style>
+      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
+      .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#1d2e28}
+      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#52645c}
+      .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}
+      .box{fill:#ffffff;stroke:#c9d8d1;stroke-width:1.5;filter:url(#cardShadow)}
+      .ok{fill:#eef9f4;stroke:#5eba93}
+      .warn{fill:#fff8e6;stroke:#d9ac43}
+      .stop{fill:#fff0f0;stroke:#d97872}
+      .line{fill:none;stroke:#347e68;stroke-width:2.5;marker-end:url(#arrow)}
+      .redline{fill:none;stroke:#d97872;stroke-width:2.5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="560" fill="url(#bg)"/>
+  <circle cx="1045" cy="100" r="96" fill="#d97872" opacity="0.08"/>
+  <circle cx="225" cy="465" r="120" fill="#5eba93" opacity="0.08"/>
+  <text class="title" x="60" y="58">Safety Model</text>
+  <text class="t" x="60" y="84">Public actions stay ergonomic. Host and risky Android mutations are gated.</text>
+
+  <g transform="translate(72 150)">
+    <rect class="box ok" width="230" height="118" rx="8"/>
+    <text class="h" x="24" y="38">Normal runtime</text>
+    <text class="m" x="24" y="68">snapshot</text>
+    <text class="m" x="24" y="94">act / wait / app_open</text>
+  </g>
+
+  <g transform="translate(72 330)">
+    <rect class="box warn" width="230" height="118" rx="8"/>
+    <text class="h" x="24" y="38">Sensitive runtime</text>
+    <text class="m" x="24" y="68">install / remove</text>
+    <text class="m" x="24" y="94">recovery / bridge config</text>
+  </g>
+
+  <g transform="translate(430 150)">
+    <rect class="box" width="250" height="118" rx="8"/>
+    <text class="h" x="24" y="38">Daemon checks</text>
+    <text class="m" x="24" y="68">fresh snapshot id</text>
+    <text class="m" x="24" y="94">ref exists and is visible</text>
+  </g>
+
+  <g transform="translate(430 330)">
+    <rect class="box stop" width="250" height="118" rx="8"/>
+    <text class="h" x="24" y="38">Approval required</text>
+    <text class="m" x="24" y="68">approved: true</text>
+    <text class="m" x="24" y="94">protected labels blocked</text>
+  </g>
+
+  <g transform="translate(815 150)">
+    <rect class="box ok" width="245" height="118" rx="8"/>
+    <text class="h" x="24" y="38">Android action</text>
+    <text class="m" x="24" y="68">bridge or ADB</text>
+    <text class="m" x="24" y="94">post-action verify</text>
+  </g>
+
+  <g transform="translate(815 330)">
+    <rect class="box stop" width="245" height="118" rx="8"/>
+    <text class="h" x="24" y="38">Mutation action</text>
+    <text class="m" x="24" y="68">install extras</text>
+    <text class="m" x="24" y="94">host/device recovery</text>
+  </g>
+
+  <path class="line" d="M302 209 L430 209"/>
+  <path class="line" d="M680 209 L815 209"/>
+  <path class="line" d="M302 389 L430 389"/>
+  <path class="line" d="M680 389 L815 389"/>
+  <path class="redline" d="M555 330 C555 303 556 292 556 280"/>
+  <g transform="translate(590 284)">
+    <rect class="box stop" width="218" height="38" rx="8"/>
+    <text class="t" x="18" y="24">blocked without approval</text>
+  </g>
+</svg>

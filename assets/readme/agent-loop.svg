@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Clawdroid agent loop</title>
+  <desc id="desc">The Clawdroid loop routes a goal, snapshots Android UI refs, acts, verifies, and snapshots again.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7fbf8"/>
+      <stop offset="0.55" stop-color="#f0f8f4"/>
+      <stop offset="1" stop-color="#eef4ff"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-18%" y="-24%" width="136%" height="148%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0f2f26" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#33856d"/>
+    </marker>
+    <style>
+      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#16251f}
+      .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#193028}
+      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#4f625a}
+      .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}
+      .node{fill:#ffffff;stroke:#c8d8d0;stroke-width:1.5;filter:url(#cardShadow)}
+      .green{fill:#edf8f3;stroke:#55b48d}
+      .amber{fill:#fff7e4;stroke:#ddb052}
+      .red{fill:#fff0f0;stroke:#d97973}
+      .line{fill:none;stroke:#33856d;stroke-width:2.5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="520" fill="url(#bg)"/>
+  <circle cx="1036" cy="92" r="90" fill="#54c29d" opacity="0.08"/>
+  <circle cx="180" cy="440" r="120" fill="#f2bb4a" opacity="0.08"/>
+  <text class="title" x="60" y="58">Agent Control Loop</text>
+  <text class="t" x="60" y="84">Refs are short lived. Every meaningful UI change returns to observation.</text>
+
+  <g transform="translate(70 172)">
+    <rect class="node green" width="145" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Goal</text>
+    <text class="t" x="24" y="64">User task</text>
+  </g>
+  <g transform="translate(275 172)">
+    <rect class="node" width="165" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Route</text>
+    <text class="m" x="24" y="64">task_route</text>
+  </g>
+  <g transform="translate(500 172)">
+    <rect class="node" width="165" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Observe</text>
+    <text class="m" x="24" y="64">snapshot</text>
+  </g>
+  <g transform="translate(725 172)">
+    <rect class="node amber" width="165" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Choose ref</text>
+    <text class="m" x="24" y="64">a1, a2, a3</text>
+  </g>
+  <g transform="translate(950 172)">
+    <rect class="node" width="165" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Act</text>
+    <text class="m" x="24" y="64">click / type</text>
+  </g>
+
+  <g transform="translate(610 348)">
+    <rect class="node green" width="185" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Verify</text>
+    <text class="t" x="24" y="64">UI changed?</text>
+  </g>
+  <g transform="translate(380 348)">
+    <rect class="node red" width="170" height="92" rx="8"/>
+    <text class="h" x="24" y="38">Safety gate</text>
+    <text class="t" x="24" y="64">block risky ops</text>
+  </g>
+
+  <path class="line" d="M215 218 L275 218"/>
+  <path class="line" d="M440 218 L500 218"/>
+  <path class="line" d="M665 218 L725 218"/>
+  <path class="line" d="M890 218 L950 218"/>
+  <path class="line" d="M1032 264 C1010 350 892 395 795 395"/>
+  <path class="line" d="M610 395 L550 395"/>
+  <path class="line" d="M450 348 C430 303 458 262 500 240"/>
+  <path class="line" d="M704 348 C705 302 688 269 665 240"/>
+
+  <g transform="translate(512 104)">
+    <rect class="node" width="320" height="42" rx="8"/>
+    <text class="m" x="22" y="27">If ambiguous: daemon decide_next</text>
+  </g>
+  <path class="line" d="M668 146 C715 152 739 160 774 172"/>
+</svg>

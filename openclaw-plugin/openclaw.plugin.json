@@ -1,0 +1,70 @@
+{
+  "id": "android-waydroid",
+  "name": "Android (Waydroid)",
+  "description": "Android app control for OpenClaw using Waydroid, an AccessibilityService bridge, and ADB-backed fallbacks.",
+  "skills": ["skills"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "daemonBaseUrl": {
+        "type": "string",
+        "default": "http://127.0.0.1:48765"
+      },
+      "defaultDevice": {
+        "type": "string",
+        "default": "default"
+      },
+      "adbSerial": {
+        "type": "string",
+        "default": ""
+      },
+      "allowedPackages": {
+        "type": "array",
+        "items": { "type": "string" },
+        "default": []
+      },
+      "allowHostControl": {
+        "type": "boolean",
+        "default": true
+      },
+      "allowAgentAppOpen": {
+        "type": "boolean",
+        "default": true
+      },
+      "allowAgentAppsList": {
+        "type": "boolean",
+        "default": true
+      },
+      "allowAgentScreenshots": {
+        "type": "boolean",
+        "default": true
+      },
+      "allowAgentInstall": {
+        "type": "boolean",
+        "default": false
+      },
+      "requireApprovalForInstall": {
+        "type": "boolean",
+        "default": true
+      },
+      "requireApprovalForProtectedActions": {
+        "type": "boolean",
+        "default": true
+      },
+      "defaultDecisionMode": {
+        "type": "string",
+        "enum": ["deterministic", "auto", "llm_text", "llm_vision"],
+        "default": "auto"
+      },
+      "defaultLlmProvider": {
+        "type": "string",
+        "default": "openrouter"
+      },
+      "defaultLlmModel": {
+        "type": "string",
+        "default": "bytedance/ui-tars-1.5-7b"
+      }
+    }
+  }
+}

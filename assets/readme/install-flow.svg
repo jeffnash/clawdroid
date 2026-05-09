@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">Clawdroid install flow</title>
+  <desc id="desc">Guided setup installs dependencies, initializes Waydroid, installs the bridge APK, configures agents, and runs doctor and smoke checks.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbf8"/>
+      <stop offset="0.52" stop-color="#f2faf6"/>
+      <stop offset="1" stop-color="#eef4ff"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-18%" y="-24%" width="136%" height="148%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#14332a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#3a866f"/>
+    </marker>
+    <style>
+      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
+      .h{font:700 16px Inter,Segoe UI,Arial,sans-serif;fill:#1f3029}
+      .t{font:500 13px Inter,Segoe UI,Arial,sans-serif;fill:#52665e}
+      .m{font:650 12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}
+      .box{fill:#ffffff;stroke:#c8d9d0;stroke-width:1.5;filter:url(#cardShadow)}
+      .green{fill:#edf8f3;stroke:#55b68f}
+      .amber{fill:#fff7e4;stroke:#d9ad4a}
+      .blue{fill:#eff4ff;stroke:#7b99d5}
+      .line{fill:none;stroke:#3a866f;stroke-width:2.5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="560" fill="url(#bg)"/>
+  <circle cx="1010" cy="112" r="94" fill="#7b99d5" opacity="0.08"/>
+  <circle cx="280" cy="480" r="120" fill="#d9ad4a" opacity="0.08"/>
+  <text class="title" x="60" y="58">Setup Flow</text>
+  <text class="t" x="60" y="84">Guided setup can run the full install, or just configure specific pieces such as LLM fallback.</text>
+
+  <g transform="translate(62 156)">
+    <rect class="box green" width="148" height="98" rx="8"/>
+    <text class="h" x="20" y="34">1. Packages</text>
+    <text class="m" x="20" y="64">Waydroid</text>
+    <text class="m" x="20" y="84">ADB tools</text>
+  </g>
+  <g transform="translate(262 156)">
+    <rect class="box blue" width="148" height="98" rx="8"/>
+    <text class="h" x="20" y="34">2. Android</text>
+    <text class="m" x="20" y="64">init images</text>
+    <text class="m" x="20" y="84">start UI</text>
+  </g>
+  <g transform="translate(462 156)">
+    <rect class="box amber" width="148" height="98" rx="8"/>
+    <text class="h" x="20" y="34">3. Bridge</text>
+    <text class="m" x="20" y="64">build APK</text>
+    <text class="m" x="20" y="84">enable access</text>
+  </g>
+  <g transform="translate(662 156)">
+    <rect class="box green" width="148" height="98" rx="8"/>
+    <text class="h" x="20" y="34">4. Extras</text>
+    <text class="m" x="20" y="64">stores</text>
+    <text class="m" x="20" y="84">GApps / ARM</text>
+  </g>
+  <g transform="translate(862 156)">
+    <rect class="box blue" width="148" height="98" rx="8"/>
+    <text class="h" x="20" y="34">5. Agents</text>
+    <text class="m" x="20" y="64">Hermes</text>
+    <text class="m" x="20" y="84">OpenClaw</text>
+  </g>
+
+  <path class="line" d="M210 205 L262 205"/>
+  <path class="line" d="M410 205 L462 205"/>
+  <path class="line" d="M610 205 L662 205"/>
+  <path class="line" d="M810 205 L862 205"/>
+
+  <g transform="translate(212 344)">
+    <rect class="box amber" width="240" height="98" rx="8"/>
+    <text class="h" x="22" y="34">Visual fallback</text>
+    <text class="m" x="22" y="64">OpenRouter UI-TARS</text>
+    <text class="m" x="22" y="84">or local endpoint</text>
+  </g>
+  <g transform="translate(512 344)">
+    <rect class="box green" width="240" height="98" rx="8"/>
+    <text class="h" x="22" y="34">Doctor</text>
+    <text class="m" x="22" y="64">services ready</text>
+    <text class="m" x="22" y="84">bridge connected</text>
+  </g>
+  <g transform="translate(812 344)">
+    <rect class="box blue" width="240" height="98" rx="8"/>
+    <text class="h" x="22" y="34">Smoke test</text>
+    <text class="m" x="22" y="64">snapshot</text>
+    <text class="m" x="22" y="84">safe tap</text>
+  </g>
+  <path class="line" d="M936 254 C914 306 844 355 752 392"/>
+  <path class="line" d="M452 393 L512 393"/>
+  <path class="line" d="M752 393 L812 393"/>
+</svg>

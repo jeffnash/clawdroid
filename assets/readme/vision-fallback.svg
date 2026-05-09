@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Clawdroid vision fallback</title>
+  <desc id="desc">Clawdroid combines screenshots and accessibility refs before sending a bounded decision request to UI-TARS or a configured vision model.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbf8"/>
+      <stop offset="0.55" stop-color="#f2faf6"/>
+      <stop offset="1" stop-color="#eef4ff"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-18%" y="-24%" width="136%" height="148%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#14332a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#3b8872"/>
+    </marker>
+    <style>
+      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
+      .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#1f3029}
+      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#52665e}
+      .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}
+      .box{fill:#ffffff;stroke:#c8d9d0;stroke-width:1.5;filter:url(#cardShadow)}
+      .green{fill:#edf8f3;stroke:#55b68f}
+      .amber{fill:#fff7e4;stroke:#d9ad4a}
+      .blue{fill:#eff4ff;stroke:#7b99d5}
+      .red{fill:#fff0f0;stroke:#d97872}
+      .line{fill:none;stroke:#3b8872;stroke-width:2.5;marker-end:url(#arrow)}
+      .dash{fill:none;stroke:#758980;stroke-width:2;stroke-dasharray:6 6}
+    </style>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <circle cx="1060" cy="94" r="98" fill="#7b99d5" opacity="0.08"/>
+  <circle cx="180" cy="500" r="130" fill="#55b68f" opacity="0.08"/>
+  <text class="title" x="60" y="58">Daemon-Owned Vision Fallback</text>
+  <text class="t" x="60" y="84">The model proposes a daemon ref. It never directly clicks pixels or bypasses safety checks.</text>
+
+  <g transform="translate(70 150)">
+    <rect class="box blue" width="220" height="126" rx="8"/>
+    <text class="h" x="24" y="38">Screenshot</text>
+    <rect x="24" y="58" width="172" height="44" rx="6" fill="#dfe8ff" stroke="#9bb0db"/>
+    <circle cx="58" cy="80" r="10" fill="#7b99d5"/>
+    <rect x="82" y="72" width="78" height="10" rx="5" fill="#6f817b"/>
+  </g>
+
+  <g transform="translate(70 340)">
+    <rect class="box green" width="220" height="126" rx="8"/>
+    <text class="h" x="24" y="38">Accessibility refs</text>
+    <text class="m" x="24" y="70">a1: Search</text>
+    <text class="m" x="24" y="96">a2: Continue</text>
+  </g>
+
+  <g transform="translate(430 238)">
+    <rect class="box amber" width="270" height="150" rx="8"/>
+    <text class="h" x="24" y="38">Clawdroid daemon</text>
+    <text class="m" x="24" y="72">merge screen context</text>
+    <text class="m" x="24" y="98">bounded ref list</text>
+    <text class="m" x="24" y="124">provider gate</text>
+  </g>
+
+  <g transform="translate(840 150)">
+    <rect class="box blue" width="260" height="126" rx="8"/>
+    <text class="h" x="24" y="38">Configured vision model</text>
+    <text class="m" x="24" y="70">UI-TARS / OpenRouter</text>
+    <text class="m" x="24" y="96">or local endpoint</text>
+  </g>
+
+  <g transform="translate(840 340)">
+    <rect class="box green" width="260" height="126" rx="8"/>
+    <text class="h" x="24" y="38">Validated action</text>
+    <text class="m" x="24" y="70">decision: click</text>
+    <text class="m" x="24" y="96">ref: a2</text>
+  </g>
+
+  <g transform="translate(430 476)">
+    <rect class="box red" width="270" height="62" rx="8"/>
+    <text class="h" x="24" y="38">No generic vision_analyze</text>
+  </g>
+
+  <path class="line" d="M290 213 C350 220 376 252 430 282"/>
+  <path class="line" d="M290 403 C350 394 376 362 430 332"/>
+  <path class="line" d="M700 284 C754 238 786 211 840 204"/>
+  <path class="line" d="M970 276 C970 306 970 316 970 340"/>
+  <path class="line" d="M840 403 C760 420 737 393 700 355"/>
+  <path class="dash" d="M565 388 L565 476"/>
+</svg>

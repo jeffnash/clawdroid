@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Clawdroid architecture diagram</title>
+  <desc id="desc">Hermes and OpenClaw call the Clawdroid daemon, which coordinates routing, snapshots, actions, UI-TARS decisions, the Android bridge, ADB, and Waydroid.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbf8"/>
+      <stop offset="0.55" stop-color="#f1f8f4"/>
+      <stop offset="1" stop-color="#eef4ff"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-18%" y="-18%" width="136%" height="136%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#14332a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#3e9e82"/>
+    </marker>
+    <style>
+      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#15251f}
+      .h{font:700 18px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
+      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#41554e}
+      .m{font:600 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#25483e}
+      .box{fill:#ffffff;stroke:#c8d8d0;stroke-width:1.5;filter:url(#cardShadow)}
+      .agent{fill:#edf8f3;stroke:#59b991}
+      .daemon{fill:#fff8e8;stroke:#ddad43}
+      .android{fill:#eef3ff;stroke:#7795d1}
+      .gate{fill:#fff0f0;stroke:#e17b75}
+      .line{fill:none;stroke:#3e9e82;stroke-width:2.5;marker-end:url(#arrow)}
+      .dash{fill:none;stroke:#7795d1;stroke-width:2;stroke-dasharray:6 6;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <circle cx="1040" cy="90" r="100" fill="#7b99d5" opacity="0.08"/>
+  <circle cx="540" cy="610" r="150" fill="#55b991" opacity="0.08"/>
+  <text class="title" x="60" y="58">Clawdroid Architecture</text>
+  <text class="t" x="60" y="84">Agent tools stay high level. The daemon owns Android state, safety checks, and device execution.</text>
+
+  <g transform="translate(60 132)">
+    <rect class="box agent" width="250" height="170" rx="8"/>
+    <text class="h" x="24" y="38">Agent layer</text>
+    <text class="m" x="24" y="72">Hermes</text>
+    <text class="m" x="24" y="100">OpenClaw</text>
+    <text class="t" x="24" y="132">android / android_admin</text>
+  </g>
+
+  <g transform="translate(440 92)">
+    <rect class="box daemon" width="320" height="450" rx="8"/>
+    <text class="h" x="28" y="40">Python daemon</text>
+    <rect class="box" x="28" y="72" width="264" height="42" rx="8"/>
+    <text class="m" x="52" y="98">task_route / service_resolve</text>
+    <rect class="box" x="28" y="130" width="264" height="42" rx="8"/>
+    <text class="m" x="52" y="156">snapshot / screen_context</text>
+    <rect class="box" x="28" y="188" width="264" height="42" rx="8"/>
+    <text class="m" x="52" y="214">act / coordinate_act</text>
+    <rect class="box" x="28" y="246" width="264" height="42" rx="8"/>
+    <text class="m" x="52" y="272">verify / stale recovery</text>
+    <rect class="box gate" x="28" y="304" width="264" height="42" rx="8"/>
+    <text class="m" x="52" y="330">approval and safety gates</text>
+    <rect class="box" x="28" y="362" width="264" height="58" rx="8"/>
+    <text class="m" x="52" y="388">decide_next</text>
+    <text class="t" x="52" y="410">UI-TARS / OpenRouter or local</text>
+  </g>
+
+  <g transform="translate(890 132)">
+    <rect class="box android" width="250" height="170" rx="8"/>
+    <text class="h" x="24" y="38">Waydroid Android</text>
+    <text class="m" x="24" y="72">AccessibilityService bridge</text>
+    <text class="m" x="24" y="100">ADB fallback</text>
+    <text class="m" x="24" y="128">Apps, stores, settings</text>
+  </g>
+
+  <g transform="translate(890 384)">
+    <rect class="box android" width="250" height="126" rx="8"/>
+    <text class="h" x="24" y="38">Host services</text>
+    <text class="m" x="24" y="72">Waydroid UI supervisor</text>
+    <text class="m" x="24" y="100">Weston on X11</text>
+  </g>
+
+  <path class="line" d="M310 214 C360 214 382 214 440 214"/>
+  <path class="line" d="M760 214 C812 214 835 214 890 214"/>
+  <path class="line" d="M760 444 C812 444 835 444 890 444"/>
+  <path class="dash" d="M1015 302 C1015 338 1015 348 1015 384"/>
+  <path class="dash" d="M600 542 C600 605 875 603 1015 510"/>
+
+  <g transform="translate(92 388)">
+    <rect class="box" width="210" height="108" rx="8"/>
+    <text class="h" x="22" y="36">Public API</text>
+    <text class="m" x="22" y="68">/v1/agent/dispatch</text>
+    <text class="m" x="22" y="92">/v1/admin/dispatch</text>
+  </g>
+  <path class="line" d="M302 442 C360 442 392 432 440 404"/>
+</svg>

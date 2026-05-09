@@ -1,0 +1,8 @@
+name: clawdroid
+version: 0.1.0
+description: "Android app control for Hermes using the Clawdroid Waydroid daemon, AccessibilityService bridge, and ADB fallbacks."
+author: Clawdroid contributors
+kind: backend
+provides_tools:
+  - android
+  - android_admin

@@ -1,0 +1,17 @@
+{
+  "name": "android-waydroid",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "OpenClaw Android app control via Waydroid + AccessibilityService + ADB fallbacks",
+  "main": "./index.js",
+  "openclaw": {
+    "extensions": ["./index.js"]
+  },
+  "scripts": {
+    "check": "find . -path './node_modules' -prune -o -name '*.js' -type f -print | sort | while IFS= read -r js_file; do node --check \"$js_file\"; done",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.27"
+  }
+}

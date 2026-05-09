@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openclaw-android-waydroid-daemon"
+version = "0.1.0"
+description = "Waydroid Android control daemon for OpenClaw and Hermes"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi==0.115.12",
+  "uvicorn[standard]==0.34.0",
+  "pydantic==2.11.1",
+  "requests==2.32.3",
+  "json5==0.10.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]

@@ -1,0 +1,8 @@
+<resources>
+  <string name="app_name">OpenClaw Android Bridge</string>
+  <string name="accessibility_service_label">OpenClaw Accessibility Bridge</string>
+  <string name="accessibility_service_description">Provides a bridge for OpenClaw to inspect and operate Android UI trees inside Waydroid.</string>
+  <string name="open_accessibility_settings">Open Accessibility Settings</string>
+  <string name="refresh_status">Refresh Status</string>
+  <string name="main_status_placeholder">Bridge status will appear here.</string>
+</resources>

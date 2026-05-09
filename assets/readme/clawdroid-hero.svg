@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Clawdroid hero graphic</title>
+  <desc id="desc">A Linux desktop agent controlling a Waydroid Android window through Clawdroid refs and daemon actions.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101817"/>
+      <stop offset="0.48" stop-color="#13251f"/>
+      <stop offset="1" stop-color="#1f2630"/>
+    </linearGradient>
+    <linearGradient id="phone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbf8"/>
+      <stop offset="1" stop-color="#dcece4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#4fc3a1"/>
+    </marker>
+    <style>
+      .label{font:600 18px Inter,Segoe UI,Arial,sans-serif;fill:#e8f5ef}
+      .small{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#b9cec5}
+      .mono{font:600 15px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#dcfff0}
+      .chip{fill:#17352c;stroke:#4fc3a1;stroke-width:1.5}
+      .line{fill:none;stroke:#4fc3a1;stroke-width:3;marker-end:url(#arrow)}
+      .muted-line{fill:none;stroke:#6f817b;stroke-width:1.4;stroke-dasharray:5 7}
+    </style>
+  </defs>
+  <rect width="1200" height="520" rx="0" fill="url(#bg)"/>
+  <g opacity="0.14">
+    <path d="M0 435 C170 388 275 474 456 425 C655 371 789 420 958 365 C1065 331 1135 351 1200 319" fill="none" stroke="#92cdb2" stroke-width="2"/>
+    <path d="M0 92 C180 145 322 57 508 110 C688 161 793 82 968 132 C1068 161 1143 134 1200 107" fill="none" stroke="#ffce73" stroke-width="2"/>
+  </g>
+
+  <g transform="translate(86 74)">
+    <text class="label" x="0" y="0">Hermes / OpenClaw agent</text>
+    <rect x="0" y="28" width="360" height="254" rx="8" fill="#11191f" stroke="#32423c"/>
+    <rect x="0" y="28" width="360" height="36" rx="8" fill="#1b2b2a"/>
+    <circle cx="24" cy="46" r="5" fill="#ff7468"/>
+    <circle cx="44" cy="46" r="5" fill="#ffce73"/>
+    <circle cx="64" cy="46" r="5" fill="#64d498"/>
+    <text class="mono" x="24" y="98">$ android snapshot</text>
+    <text class="small" x="24" y="128">refs: a1, a2, a3...</text>
+    <text class="mono" x="24" y="168">$ android act --ref a2</text>
+    <text class="small" x="24" y="198">verify, resnapshot, continue</text>
+    <rect class="chip" x="24" y="224" width="190" height="34" rx="8"/>
+    <text class="mono" x="42" y="246">decide_next</text>
+  </g>
+
+  <g transform="translate(505 94)" filter="url(#shadow)">
+    <rect x="0" y="0" width="292" height="348" rx="34" fill="#0c1215"/>
+    <rect x="18" y="22" width="256" height="304" rx="24" fill="url(#phone)"/>
+    <rect x="44" y="52" width="200" height="24" rx="12" fill="#3f7f6a"/>
+    <rect x="44" y="94" width="200" height="64" rx="8" fill="#ffffff" stroke="#c5d9cf"/>
+    <rect x="58" y="110" width="76" height="12" rx="6" fill="#6d8177"/>
+    <rect x="58" y="132" width="150" height="10" rx="5" fill="#b7c8c0"/>
+    <rect x="44" y="176" width="200" height="64" rx="8" fill="#ffffff" stroke="#c5d9cf"/>
+    <rect x="58" y="192" width="94" height="12" rx="6" fill="#6d8177"/>
+    <rect x="58" y="214" width="142" height="10" rx="5" fill="#b7c8c0"/>
+    <rect x="44" y="258" width="200" height="40" rx="8" fill="#4fc3a1"/>
+    <text x="144" y="283" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="700" fill="#0b251d">Continue</text>
+  </g>
+
+  <path class="line" d="M448 208 C489 202 493 176 536 174"/>
+  <path class="line" d="M448 247 C498 272 491 304 536 318"/>
+  <path class="muted-line" d="M800 140 C875 99 949 112 1014 166"/>
+  <path class="muted-line" d="M804 365 C882 424 977 395 1035 322"/>
+
+  <g transform="translate(832 116)">
+    <rect class="chip" x="0" y="0" width="164" height="34" rx="8"/>
+    <text class="mono" x="27" y="22">a1</text>
+    <text class="small" x="74" y="22">route</text>
+    <rect class="chip" x="0" y="58" width="164" height="34" rx="8"/>
+    <text class="mono" x="27" y="80">a2</text>
+    <text class="small" x="74" y="80">click</text>
+    <rect class="chip" x="0" y="116" width="164" height="34" rx="8"/>
+    <text class="mono" x="27" y="138">a3</text>
+    <text class="small" x="74" y="138">verify</text>
+  </g>
+
+  <g transform="translate(820 332)">
+    <rect x="0" y="0" width="292" height="82" rx="8" fill="#14201d" stroke="#45645b"/>
+    <text class="label" x="24" y="32">Clawdroid daemon</text>
+    <text class="small" x="24" y="58">Accessibility bridge + ADB + safety gates</text>
+  </g>
+
+  <text x="600" y="474" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="46" font-weight="800" fill="#f4fbf7">Clawdroid</text>
+  <text x="600" y="503" text-anchor="middle" class="small">Android apps as a local tool surface for AI agents on Linux</text>
+</svg>

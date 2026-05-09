@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+      android:id="@+id/titleText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/app_name"
+      android:textSize="24sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/statusText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/main_status_placeholder" />
+
+    <Button
+      android:id="@+id/openAccessibilityButton"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/open_accessibility_settings" />
+
+    <Button
+      android:id="@+id/refreshButton"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:text="@string/refresh_status" />
+  </LinearLayout>
+</ScrollView>
