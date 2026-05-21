@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid agent loop</title>
   <desc id="desc">The Clawdroid loop routes a goal, snapshots Android UI refs, acts, verifies, and snapshots again.</desc>
   <defs>
@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#33856d"/>
     </marker>
     <style>
-      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#16251f}
+      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#16251f}
       .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#193028}
       .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#4f625a}
       .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}

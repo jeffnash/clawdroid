@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid doctor output</title>
   <desc id="desc">A terminal style doctor report with checks for Waydroid, ADB, bridge, Google Play, ARM translation, and LLM vision.</desc>
   <defs>
@@ -11,7 +11,7 @@
       <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.22"/>
     </filter>
     <style>
-      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#e8f5ef}
+      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#e8f5ef}
       .bar{fill:#1c272a}
       .term{fill:#101719;stroke:#314446;stroke-width:1.5}
       .m{font:600 15px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}

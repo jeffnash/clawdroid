@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid safety model</title>
   <desc id="desc">Normal Android actions go through the daemon, while installs, recovery, and protected operations require approval gates.</desc>
   <defs>
@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#347e68"/>
     </marker>
     <style>
-      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
+      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
       .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#1d2e28}
       .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#52645c}
       .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}
@@ -55,9 +55,9 @@
 
   <g transform="translate(430 330)">
     <rect class="box stop" width="250" height="118" rx="8"/>
-    <text class="h" x="24" y="38">Approval required</text>
+    <text class="h" x="24" y="38">Approval gate</text>
     <text class="m" x="24" y="68">approved: true</text>
-    <text class="m" x="24" y="94">protected labels blocked</text>
+    <text class="m" x="24" y="94">protected actions</text>
   </g>
 
   <g transform="translate(815 150)">
@@ -80,7 +80,7 @@
   <path class="line" d="M680 389 L815 389"/>
   <path class="redline" d="M555 330 C555 303 556 292 556 280"/>
   <g transform="translate(590 284)">
-    <rect class="box stop" width="218" height="38" rx="8"/>
-    <text class="t" x="18" y="24">blocked without approval</text>
+    <rect class="box stop" width="244" height="38" rx="8"/>
+    <text class="t" x="122" y="24" text-anchor="middle">blocked without approval</text>
   </g>
 </svg>

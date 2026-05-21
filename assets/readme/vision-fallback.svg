@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid vision fallback</title>
   <desc id="desc">Clawdroid combines screenshots and accessibility refs before sending a bounded decision request to UI-TARS or a configured vision model.</desc>
   <defs>
@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#3b8872"/>
     </marker>
     <style>
-      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
+      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
       .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#1f3029}
       .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#52665e}
       .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}

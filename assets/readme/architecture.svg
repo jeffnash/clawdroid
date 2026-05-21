@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid architecture diagram</title>
   <desc id="desc">Hermes and OpenClaw call the Clawdroid daemon, which coordinates routing, snapshots, actions, UI-TARS decisions, the Android bridge, ADB, and Waydroid.</desc>
   <defs>
@@ -14,11 +14,12 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#3e9e82"/>
     </marker>
     <style>
-      .title{font:800 28px Inter,Segoe UI,Arial,sans-serif;fill:#15251f}
+      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#15251f}
       .h{font:700 18px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
-      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#41554e}
-      .m{font:600 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#25483e}
+      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#40564e}
+      .m{font:600 12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#25483e}
       .box{fill:#ffffff;stroke:#c8d8d0;stroke-width:1.5;filter:url(#cardShadow)}
+      .module{fill:#ffffff;stroke:#d6e2dc;stroke-width:1.4}
       .agent{fill:#edf8f3;stroke:#59b991}
       .daemon{fill:#fff8e8;stroke:#ddad43}
       .android{fill:#eef3ff;stroke:#7795d1}
@@ -41,22 +42,22 @@
     <text class="t" x="24" y="132">android / android_admin</text>
   </g>
 
-  <g transform="translate(440 92)">
-    <rect class="box daemon" width="320" height="450" rx="8"/>
+  <g transform="translate(430 92)">
+    <rect class="box daemon" width="348" height="450" rx="8"/>
     <text class="h" x="28" y="40">Python daemon</text>
-    <rect class="box" x="28" y="72" width="264" height="42" rx="8"/>
-    <text class="m" x="52" y="98">task_route / service_resolve</text>
-    <rect class="box" x="28" y="130" width="264" height="42" rx="8"/>
-    <text class="m" x="52" y="156">snapshot / screen_context</text>
-    <rect class="box" x="28" y="188" width="264" height="42" rx="8"/>
-    <text class="m" x="52" y="214">act / coordinate_act</text>
-    <rect class="box" x="28" y="246" width="264" height="42" rx="8"/>
-    <text class="m" x="52" y="272">verify / stale recovery</text>
-    <rect class="box gate" x="28" y="304" width="264" height="42" rx="8"/>
-    <text class="m" x="52" y="330">approval and safety gates</text>
-    <rect class="box" x="28" y="362" width="264" height="58" rx="8"/>
-    <text class="m" x="52" y="388">decide_next</text>
-    <text class="t" x="52" y="410">UI-TARS / OpenRouter or local</text>
+    <rect class="module" x="24" y="72" width="300" height="42" rx="8"/>
+    <text class="m" x="48" y="98">task_route / service_resolve</text>
+    <rect class="module" x="24" y="130" width="300" height="42" rx="8"/>
+    <text class="m" x="48" y="156">snapshot / screen_context</text>
+    <rect class="module" x="24" y="188" width="300" height="42" rx="8"/>
+    <text class="m" x="48" y="214">act / coordinate_act</text>
+    <rect class="module" x="24" y="246" width="300" height="42" rx="8"/>
+    <text class="m" x="48" y="272">verify / stale recovery</text>
+    <rect class="module gate" x="24" y="304" width="300" height="42" rx="8"/>
+    <text class="m" x="48" y="330">approval + safety gates</text>
+    <rect class="module" x="24" y="362" width="300" height="58" rx="8"/>
+    <text class="m" x="48" y="388">decide_next</text>
+    <text class="t" x="48" y="410">UI-TARS / OpenRouter or local</text>
   </g>
 
   <g transform="translate(890 132)">
@@ -74,11 +75,11 @@
     <text class="m" x="24" y="100">Weston on X11</text>
   </g>
 
-  <path class="line" d="M310 214 C360 214 382 214 440 214"/>
-  <path class="line" d="M760 214 C812 214 835 214 890 214"/>
-  <path class="line" d="M760 444 C812 444 835 444 890 444"/>
+  <path class="line" d="M310 214 C360 214 378 214 430 214"/>
+  <path class="line" d="M778 214 C824 214 846 214 890 214"/>
+  <path class="line" d="M778 444 C824 444 846 444 890 444"/>
   <path class="dash" d="M1015 302 C1015 338 1015 348 1015 384"/>
-  <path class="dash" d="M600 542 C600 605 875 603 1015 510"/>
+  <path class="dash" d="M604 542 C604 605 875 603 1015 510"/>
 
   <g transform="translate(92 388)">
     <rect class="box" width="210" height="108" rx="8"/>
@@ -86,5 +87,5 @@
     <text class="m" x="22" y="68">/v1/agent/dispatch</text>
     <text class="m" x="22" y="92">/v1/admin/dispatch</text>
   </g>
-  <path class="line" d="M302 442 C360 442 392 432 440 404"/>
+  <path class="line" d="M302 442 C358 442 386 432 430 404"/>
 </svg>
