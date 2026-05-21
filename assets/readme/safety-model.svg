@@ -14,10 +14,10 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#347e68"/>
     </marker>
     <style>
-      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#17261f}
-      .h{font:700 17px Inter,Segoe UI,Arial,sans-serif;fill:#1d2e28}
-      .t{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#52645c}
-      .m{font:650 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#28594b}
+      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
+      .h{font:700 17px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#1d2e28}
+      .t{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#52645c}
+      .m{font:600 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#28594b}
       .box{fill:#ffffff;stroke:#c9d8d1;stroke-width:1.5;filter:url(#cardShadow)}
       .ok{fill:#eef9f4;stroke:#5eba93}
       .warn{fill:#fff8e6;stroke:#d9ac43}

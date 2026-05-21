@@ -25,10 +25,10 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#8aa59b"/>
     </marker>
     <style>
-      .label{font:650 18px Inter,Segoe UI,Arial,sans-serif;fill:#e9f7f1}
-      .heading{font:800 22px Inter,Segoe UI,Arial,sans-serif;fill:#f2fbf6}
-      .small{font:500 14px Inter,Segoe UI,Arial,sans-serif;fill:#b9cec5}
-      .mono{font:650 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#dcfff0}
+      .label{font:700 18px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#e9f7f1}
+      .heading{font:800 22px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#f2fbf6}
+      .small{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#b9cec5}
+      .mono{font:600 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#dcfff0}
       .chip{fill:#17352c;stroke:#56d0a9;stroke-width:1.5}
       .safe{fill:#34251b;stroke:#ffce73;stroke-width:1.5}
       .line{fill:none;stroke:#56d0a9;stroke-width:3;marker-end:url(#arrow)}
@@ -82,7 +82,7 @@
     <rect x="58" y="220" width="94" height="12" rx="6" fill="#6d8177"/>
     <rect x="58" y="242" width="142" height="10" rx="5" fill="#b7c8c0"/>
     <rect x="44" y="286" width="200" height="40" rx="8" fill="#56d0a9"/>
-    <text x="144" y="311" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="800" fill="#0b251d">Continue</text>
+    <text x="144" y="311" text-anchor="middle" font-family="'Noto Sans',Segoe UI,Arial,sans-serif" font-size="15" font-weight="800" fill="#0b251d">Continue</text>
   </g>
 
   <path class="line" d="M402 218 C426 218 438 218 462 218"/>
@@ -103,6 +103,6 @@
     <text class="small" x="302" y="22">verify</text>
   </g>
 
-  <text x="600" y="506" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="46" font-weight="850" fill="#f4fbf7">Clawdroid</text>
+  <text x="600" y="506" text-anchor="middle" font-family="'Noto Sans',Segoe UI,Arial,sans-serif" font-size="46" font-weight="850" fill="#f4fbf7">Clawdroid</text>
   <text x="600" y="535" text-anchor="middle" class="small">Android apps as a local tool surface for AI agents on Linux</text>
 </svg>

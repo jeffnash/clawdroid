@@ -11,10 +11,10 @@
       <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.22"/>
     </filter>
     <style>
-      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#e8f5ef}
+      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#e8f5ef}
       .bar{fill:#1c272a}
       .term{fill:#101719;stroke:#314446;stroke-width:1.5}
-      .m{font:600 15px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+      .m{font:600 15px 'Noto Sans Mono',Segoe UI,Arial,sans-serif}
       .green{fill:#6ee7a8}
       .amber{fill:#ffcf73}
       .muted{fill:#a9bbb5}

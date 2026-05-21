@@ -1,11 +1,23 @@
 # Clawdroid
 
+<p align="center">
+  <img src="assets/clawdroid-logo.webp" alt="Clawdroid logo" width="720">
+</p>
+
 Android apps as a local tool surface for AI agents on Linux.
 
 Clawdroid lets Hermes and OpenClaw operate real Android apps through Waydroid. Agents route to an app, take a short-lived UI `snapshot`, act on refs such as `a1`, then verify and snapshot again. The daemon owns safety checks, the Android accessibility bridge, screenshots, ADB fallbacks, and optional vision fallback.
 
 <p align="center">
   <img src="assets/readme/clawdroid-hero.svg" alt="Clawdroid controlling a Waydroid Android app through agent refs" width="100%">
+</p>
+
+## Live Example
+
+This is a captured Hermes run: Telegram sends `android_*` tool calls, Clawdroid controls Amazon inside Waydroid, and the daemon reports back through the conversation.
+
+<p align="center">
+  <img src="assets/readme/live-amazon-toothbrush.webp" alt="Hermes Telegram conversation controlling the Amazon Android app in Waydroid through Clawdroid" width="100%">
 </p>
 
 ## Quick Start
@@ -22,13 +34,29 @@ Common one-shot installs:
 
 ```bash
 # Hermes
-./setup_everything.sh --install-system-deps --install-hermes-plugin --init-waydroid --extras microg --smoke-test
+./setup_everything.sh \
+  --install-system-deps \
+  --install-hermes-plugin \
+  --init-waydroid \
+  --extras microg \
+  --smoke-test
 
 # OpenClaw
-./setup_everything.sh --install-system-deps --install-openclaw --init-waydroid --extras microg --enable-admin-tool --smoke-test
+./setup_everything.sh \
+  --install-system-deps \
+  --install-openclaw \
+  --init-waydroid \
+  --extras microg \
+  --enable-admin-tool \
+  --smoke-test
 
 # Google Play / GApps instead of MicroG
-./setup_everything.sh --install-system-deps --install-hermes-plugin --init-waydroid --with-gapps --smoke-test
+./setup_everything.sh \
+  --install-system-deps \
+  --install-hermes-plugin \
+  --init-waydroid \
+  --with-gapps \
+  --smoke-test
 ```
 
 After installing the Hermes plugin, restart Hermes if setup did not do it for you:
@@ -58,7 +86,8 @@ Hermes checks:
 
 ```bash
 hermes -t clawdroid -z 'Check Android status with the android tool'
-hermes -t clawdroid -z 'Open Android settings, take a snapshot, and report the visible refs. Do not tap anything risky.'
+hermes -t clawdroid -z \
+  'Open Android settings, snapshot it, and report refs. Do not tap risky controls.'
 ```
 
 Daemon and OpenClaw checks:
@@ -115,7 +144,7 @@ Useful flags:
 ```text
 --interactive                      Guided mode
 --yes                              Guided defaults without prompts
---sudo-mode manual                 Print root commands instead of running sudo inline
+--sudo-mode manual                 Print root commands instead of inline sudo
 --arm-translation libndk|libhoudini|both|none
 --with-gapps / --extras gapps      Install Google framework / Play Store support
 --skip-default-stores              Skip F-Droid, Aurora Store, and Aptoide
@@ -147,7 +176,10 @@ For root/system Hermes, use `--hermes-system` and, if needed, `--hermes-home /ro
 Configure the daemon-owned vision model during guided setup, or later:
 
 ```bash
-./setup_everything.sh --configure-llm-only --llm-provider openrouter --llm-api-key-env OPENROUTER_API_KEY
+./setup_everything.sh \
+  --configure-llm-only \
+  --llm-provider openrouter \
+  --llm-api-key-env OPENROUTER_API_KEY
 ```
 
 Local OpenAI-compatible endpoint:
