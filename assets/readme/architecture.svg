@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#3e9e82"/>
     </marker>
     <style>
-      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#15251f}
+      .title{font:800 30px 'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif;fill:#15251f}
       .h{font:700 18px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
       .t{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#40564e}
       .m{font:600 13.5px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#25483e}
@@ -32,7 +32,7 @@
   <circle cx="1040" cy="90" r="100" fill="#7b99d5" opacity="0.08"/>
   <circle cx="540" cy="610" r="150" fill="#55b991" opacity="0.08"/>
   <text class="title" x="60" y="58">Clawdroid Architecture</text>
-  <text class="t" x="60" y="84">Agent tools stay high level. The daemon owns Android state, safety checks, and device execution.</text>
+  <text class="t" x="60" y="84">Agents call one local daemon. The daemon owns Android state, safety checks, and execution.</text>
 
   <g transform="translate(60 132)">
     <rect class="box agent" width="250" height="170" rx="8"/>
@@ -46,24 +46,24 @@
     <rect class="box daemon" width="348" height="450" rx="8"/>
     <text class="h" x="28" y="40">Python daemon</text>
     <rect class="module" x="24" y="72" width="300" height="42" rx="8"/>
-    <text class="m" x="48" y="98">task_route / service_resolve</text>
+    <text class="m" x="48" y="98">Routing and service resolution</text>
     <rect class="module" x="24" y="130" width="300" height="42" rx="8"/>
-    <text class="m" x="48" y="156">snapshot / screen_context</text>
+    <text class="m" x="48" y="156">Snapshots and screen context</text>
     <rect class="module" x="24" y="188" width="300" height="42" rx="8"/>
-    <text class="m" x="48" y="214">act / coordinate_act</text>
+    <text class="m" x="48" y="214">Ref actions and coordinate actions</text>
     <rect class="module" x="24" y="246" width="300" height="42" rx="8"/>
-    <text class="m" x="48" y="272">verify / stale recovery</text>
+    <text class="m" x="48" y="272">Verification and stale recovery</text>
     <rect class="module gate" x="24" y="304" width="300" height="42" rx="8"/>
-    <text class="m" x="48" y="330">approval + safety gates</text>
+    <text class="m" x="48" y="330">Approval and safety gates</text>
     <rect class="module" x="24" y="362" width="300" height="58" rx="8"/>
-    <text class="m" x="48" y="388">decide_next</text>
+    <text class="m" x="48" y="388">Decision fallback</text>
     <text class="t" x="48" y="410">UI-TARS / OpenRouter or local</text>
   </g>
 
   <g transform="translate(890 132)">
     <rect class="box android" width="250" height="170" rx="8"/>
     <text class="h" x="24" y="38">Waydroid Android</text>
-    <text class="m" x="24" y="72">AccessibilityService bridge</text>
+    <text class="m" x="24" y="72">Android bridge</text>
     <text class="m" x="24" y="100">ADB fallback</text>
     <text class="m" x="24" y="128">Apps, stores, settings</text>
   </g>

@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#3b8872"/>
     </marker>
     <style>
-      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
+      .title{font:800 30px 'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
       .h{font:700 17px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#1f3029}
       .t{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#52665e}
       .m{font:600 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#28594b}
@@ -31,7 +31,7 @@
   <circle cx="1060" cy="94" r="98" fill="#7b99d5" opacity="0.08"/>
   <circle cx="180" cy="500" r="130" fill="#55b68f" opacity="0.08"/>
   <text class="title" x="60" y="58">Daemon-Owned Vision Fallback</text>
-  <text class="t" x="60" y="84">The model proposes a daemon ref. It never directly clicks pixels or bypasses safety checks.</text>
+  <text class="t" x="60" y="84">The model proposes a daemon reference. It never clicks pixels or bypasses safety checks.</text>
 
   <g transform="translate(70 150)">
     <rect class="box blue" width="220" height="126" rx="8"/>
@@ -44,8 +44,8 @@
   <g transform="translate(70 340)">
     <rect class="box green" width="220" height="126" rx="8"/>
     <text class="h" x="24" y="38">Accessibility refs</text>
-    <text class="m" x="24" y="70">a1: Search</text>
-    <text class="m" x="24" y="96">a2: Continue</text>
+    <text class="m" x="24" y="70">REF A1: Search</text>
+    <text class="m" x="24" y="96">REF A2: Continue</text>
   </g>
 
   <g transform="translate(430 238)">
@@ -66,8 +66,8 @@
   <g transform="translate(840 340)">
     <rect class="box green" width="260" height="126" rx="8"/>
     <text class="h" x="24" y="38">Validated action</text>
-    <text class="m" x="24" y="70">decision: click</text>
-    <text class="m" x="24" y="96">ref: a2</text>
+    <text class="m" x="24" y="70">Decision: click</text>
+    <text class="m" x="24" y="96">Target: REF A2</text>
   </g>
 
   <g transform="translate(430 476)">

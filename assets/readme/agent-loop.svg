@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid agent loop</title>
-  <desc id="desc">The Clawdroid loop routes a goal, snapshots Android UI refs, acts, verifies, and snapshots again.</desc>
+  <desc id="desc">The Clawdroid loop routes a goal, snapshots Android UI references, selects a target, acts, verifies, and snapshots again.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f7fbf8"/>
@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#33856d"/>
     </marker>
     <style>
-      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#16251f}
+      .title{font:800 30px 'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif;fill:#16251f}
       .h{font:700 17px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#193028}
       .t{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#4f625a}
       .m{font:600 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#28594b}
@@ -29,7 +29,7 @@
   <circle cx="1036" cy="92" r="90" fill="#54c29d" opacity="0.08"/>
   <circle cx="180" cy="440" r="120" fill="#f2bb4a" opacity="0.08"/>
   <text class="title" x="60" y="58">Agent Control Loop</text>
-  <text class="t" x="60" y="84">Refs are short lived. Every meaningful UI change returns to observation.</text>
+  <text class="t" x="60" y="84">Snapshot references are short lived. Every meaningful UI change returns to observation.</text>
 
   <g transform="translate(70 172)">
     <rect class="node green" width="145" height="92" rx="8"/>
@@ -48,8 +48,8 @@
   </g>
   <g transform="translate(725 172)">
     <rect class="node amber" width="165" height="92" rx="8"/>
-    <text class="h" x="24" y="38">Choose ref</text>
-    <text class="m" x="24" y="64">a1, a2, a3</text>
+    <text class="h" x="24" y="38">Select target</text>
+    <text class="m" x="24" y="64">REF A1 / REF A2</text>
   </g>
   <g transform="translate(950 172)">
     <rect class="node" width="165" height="92" rx="8"/>
@@ -79,7 +79,7 @@
 
   <g transform="translate(512 104)">
     <rect class="node" width="320" height="42" rx="8"/>
-    <text class="m" x="22" y="27">If ambiguous: daemon decide_next</text>
+    <text class="m" x="22" y="27">Ambiguous screen -> daemon decide_next</text>
   </g>
   <path class="line" d="M668 146 C715 152 739 160 774 172"/>
 </svg>

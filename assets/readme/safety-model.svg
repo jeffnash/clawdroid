@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#347e68"/>
     </marker>
     <style>
-      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
+      .title{font:800 30px 'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
       .h{font:700 17px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#1d2e28}
       .t{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#52645c}
       .m{font:600 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#28594b}
@@ -56,14 +56,14 @@
   <g transform="translate(430 330)">
     <rect class="box stop" width="250" height="118" rx="8"/>
     <text class="h" x="24" y="38">Approval gate</text>
-    <text class="m" x="24" y="68">approved: true</text>
-    <text class="m" x="24" y="94">protected actions</text>
+    <text class="m" x="24" y="68">explicit approval</text>
+    <text class="m" x="24" y="94">protected labels</text>
   </g>
 
   <g transform="translate(815 150)">
     <rect class="box ok" width="245" height="118" rx="8"/>
     <text class="h" x="24" y="38">Android action</text>
-    <text class="m" x="24" y="68">bridge or ADB</text>
+    <text class="m" x="24" y="68">Android bridge or ADB</text>
     <text class="m" x="24" y="94">post-action verify</text>
   </g>
 

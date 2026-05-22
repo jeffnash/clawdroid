@@ -14,7 +14,7 @@
       <path d="M2 2 L10 6 L2 10 Z" fill="#3a866f"/>
     </marker>
     <style>
-      .title{font:800 30px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
+      .title{font:800 30px 'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif;fill:#17261f}
       .h{font:700 16px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#1f3029}
       .t{font:500 13px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#52665e}
       .m{font:600 13.5px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#28594b}
@@ -33,31 +33,31 @@
 
   <g transform="translate(62 156)">
     <rect class="box green" width="148" height="98" rx="8"/>
-    <text class="h" x="20" y="34">1. Packages</text>
+    <text class="h" x="20" y="34">01 Packages</text>
     <text class="m" x="20" y="64">Waydroid</text>
     <text class="m" x="20" y="84">ADB tools</text>
   </g>
   <g transform="translate(262 156)">
     <rect class="box blue" width="148" height="98" rx="8"/>
-    <text class="h" x="20" y="34">2. Android</text>
+    <text class="h" x="20" y="34">02 Android</text>
     <text class="m" x="20" y="64">init images</text>
     <text class="m" x="20" y="84">start UI</text>
   </g>
   <g transform="translate(462 156)">
     <rect class="box amber" width="148" height="98" rx="8"/>
-    <text class="h" x="20" y="34">3. Bridge</text>
+    <text class="h" x="20" y="34">03 Bridge</text>
     <text class="m" x="20" y="64">build APK</text>
     <text class="m" x="20" y="84">enable access</text>
   </g>
   <g transform="translate(662 156)">
     <rect class="box green" width="148" height="98" rx="8"/>
-    <text class="h" x="20" y="34">4. Extras</text>
+    <text class="h" x="20" y="34">04 Extras</text>
     <text class="m" x="20" y="64">stores</text>
     <text class="m" x="20" y="84">GApps / ARM</text>
   </g>
   <g transform="translate(862 156)">
     <rect class="box blue" width="148" height="98" rx="8"/>
-    <text class="h" x="20" y="34">5. Agents</text>
+    <text class="h" x="20" y="34">05 Agents</text>
     <text class="m" x="20" y="64">Hermes</text>
     <text class="m" x="20" y="84">OpenClaw</text>
   </g>

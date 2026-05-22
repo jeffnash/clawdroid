@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc" text-rendering="geometricPrecision">
   <title id="title">Clawdroid hero graphic</title>
-  <desc id="desc">Hermes and OpenClaw call the Clawdroid daemon, which safely controls a Waydroid Android UI through refs, snapshots, the bridge, and ADB.</desc>
+  <desc id="desc">Hermes and OpenClaw call the Clawdroid daemon, which safely controls a Waydroid Android UI through references, snapshots, the Android bridge, and ADB.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0f1716"/>
@@ -26,9 +26,10 @@
     </marker>
     <style>
       .label{font:700 18px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#e9f7f1}
-      .heading{font:800 22px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#f2fbf6}
+      .heading{font:800 22px 'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif;fill:#f2fbf6}
       .small{font:500 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#b9cec5}
       .mono{font:600 14px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#dcfff0}
+      .tag{font:700 13px 'Noto Sans',Segoe UI,Arial,sans-serif;fill:#dcfff0}
       .chip{fill:#17352c;stroke:#56d0a9;stroke-width:1.5}
       .safe{fill:#34251b;stroke:#ffce73;stroke-width:1.5}
       .line{fill:none;stroke:#56d0a9;stroke-width:3;marker-end:url(#arrow)}
@@ -48,24 +49,24 @@
     <circle cx="24" cy="46" r="5" fill="#ff7468"/>
     <circle cx="44" cy="46" r="5" fill="#ffce73"/>
     <circle cx="64" cy="46" r="5" fill="#64d498"/>
-    <text class="mono" x="24" y="98">$ android task_route</text>
+    <text class="mono" x="24" y="98">android: route task</text>
     <text class="small" x="24" y="128">choose Android when it is best</text>
-    <text class="mono" x="24" y="168">$ android snapshot</text>
-    <text class="small" x="24" y="198">receive refs: a1, a2, a3</text>
+    <text class="mono" x="24" y="168">android: snapshot</text>
+    <text class="small" x="24" y="198">receive snapshot references</text>
     <rect class="chip" x="24" y="224" width="188" height="34" rx="8"/>
-    <text class="mono" x="42" y="246">act(snapshot_id, a2)</text>
+    <text class="mono" x="42" y="246">act on REF A2</text>
   </g>
 
   <g transform="translate(462 118)" filter="url(#shadow)">
     <rect x="0" y="0" width="276" height="276" rx="16" fill="url(#daemon)" stroke="#42685d"/>
     <text class="heading" x="28" y="42">Clawdroid daemon</text>
-    <text class="small" x="28" y="68">the only control boundary</text>
+    <text class="small" x="28" y="68">single control boundary</text>
     <rect class="chip" x="28" y="96" width="220" height="36" rx="8"/>
-    <text class="mono" x="46" y="119">route + open app</text>
+    <text class="mono" x="46" y="119">Route and open app</text>
     <rect class="chip" x="28" y="146" width="220" height="36" rx="8"/>
-    <text class="mono" x="46" y="169">snapshot refs</text>
+    <text class="mono" x="46" y="169">Snapshot references</text>
     <rect class="chip" x="28" y="196" width="220" height="36" rx="8"/>
-    <text class="mono" x="46" y="219">act + verify</text>
+    <text class="mono" x="46" y="219">Act and verify</text>
     <rect class="safe" x="28" y="244" width="220" height="22" rx="8"/>
     <text class="small" x="138" y="260" text-anchor="middle">approval and safety gates</text>
   </g>
@@ -91,18 +92,18 @@
   <path class="return" d="M820 250 C790 255 770 262 738 268"/>
   <path class="return" d="M462 340 C420 366 356 368 300 336"/>
 
-  <g transform="translate(780 414)">
-    <rect class="chip" x="0" y="0" width="104" height="34" rx="8"/>
-    <text class="mono" x="20" y="22">a1</text>
-    <text class="small" x="54" y="22">route</text>
-    <rect class="chip" x="124" y="0" width="104" height="34" rx="8"/>
-    <text class="mono" x="144" y="22">a2</text>
-    <text class="small" x="178" y="22">click</text>
-    <rect class="chip" x="248" y="0" width="110" height="34" rx="8"/>
-    <text class="mono" x="268" y="22">a3</text>
-    <text class="small" x="302" y="22">verify</text>
+  <g transform="translate(760 414)">
+    <rect class="chip" x="0" y="0" width="126" height="34" rx="8"/>
+    <text class="tag" x="16" y="22">REF A1</text>
+    <text class="small" x="80" y="22">Route</text>
+    <rect class="chip" x="140" y="0" width="126" height="34" rx="8"/>
+    <text class="tag" x="156" y="22">REF A2</text>
+    <text class="small" x="220" y="22">Click</text>
+    <rect class="chip" x="280" y="0" width="132" height="34" rx="8"/>
+    <text class="tag" x="296" y="22">REF A3</text>
+    <text class="small" x="360" y="22">Verify</text>
   </g>
 
-  <text x="600" y="506" text-anchor="middle" font-family="'Noto Sans',Segoe UI,Arial,sans-serif" font-size="46" font-weight="850" fill="#f4fbf7">Clawdroid</text>
+  <text x="600" y="506" text-anchor="middle" font-family="'Noto Sans Display','Noto Sans',Segoe UI,Arial,sans-serif" font-size="46" font-weight="850" fill="#f4fbf7">Clawdroid</text>
   <text x="600" y="535" text-anchor="middle" class="small">Android apps as a local tool surface for AI agents on Linux</text>
 </svg>
