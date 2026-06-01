@@ -40,10 +40,29 @@ fi
 
 require_cmd waydroid
 
+waydroid_shell_quick() {
+  timeout 20s waydroid shell -- "$@" 2>/dev/null | tr -d '\r'
+}
+
+package_installed() {
+  local package="$1"
+  waydroid_shell_quick pm list packages "$package" | grep -Fxq "package:${package}"
+}
+
+google_account_present() {
+  local account_output
+  account_output="$(
+    waydroid_shell_quick cmd account list 2>/dev/null \
+      || waydroid_shell_quick dumpsys account 2>/dev/null \
+      || true
+  )"
+  grep -Eq 'com\.google|@gmail\.com|@googlemail\.com' <<<"$account_output"
+}
+
 fetch_gsf_id() {
-  timeout 20s waydroid shell -- sh -c \
+  waydroid_shell_quick sh -c \
     "sqlite3 /data/data/com.google.android.gsf/databases/gservices.db 'select value from main where name = \"android_id\";'" \
-    2>/dev/null | tr -d '\r' | sed '/^[[:space:]]*$/d' | tail -n 1
+    | sed '/^[[:space:]]*$/d' | tail -n 1
 }
 
 deadline=$((SECONDS + WAIT_TIMEOUT))
@@ -57,6 +76,18 @@ while (( SECONDS <= deadline )); do
 done
 
 if ! [[ "$GSF_ID" =~ ^[0-9]+$ ]]; then
+  if package_installed com.google.android.gsf && ! google_account_present; then
+    cat >&2 <<EOF
+Unable to read a Google Services Framework Android ID yet.
+
+GApps is installed, but no signed-in Google account was detected inside
+Waydroid. Open Play Store in Waydroid, sign in with a Google account, wait for
+Play Services to finish initializing, then rerun:
+  "$PROJECT_ROOT/scripts/google_play_certification.sh"
+EOF
+    exit 1
+  fi
+
   cat >&2 <<EOF
 Unable to read a Google Services Framework Android ID yet.
 
