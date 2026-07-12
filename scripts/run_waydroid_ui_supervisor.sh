@@ -41,6 +41,7 @@ ATTACH_STAMP_FILE="${OPENCLAW_ANDROID_UI_ATTACH_STAMP_FILE:-$STATE_DIR/ui.attach
 
 ADB_SERIAL="${OPENCLAW_ANDROID_ADB_SERIAL:-}"
 INTERVAL_SECONDS="${OPENCLAW_ANDROID_UI_SUPERVISOR_INTERVAL:-5}"
+ATTACH_FAILURE_LIMIT="${OPENCLAW_ANDROID_UI_ATTACH_FAILURE_LIMIT:-3}"
 START_TIMEOUT="${OPENCLAW_ANDROID_START_TIMEOUT:-60}"
 SESSION_STALE_GRACE_SECONDS="${OPENCLAW_ANDROID_SESSION_STALE_GRACE_SECONDS:-20}"
 ANDROID_BOOT_GRACE_SECONDS="${OPENCLAW_ANDROID_BOOT_GRACE_SECONDS:-90}"
@@ -56,8 +57,26 @@ WESTON_HEIGHT="${OPENCLAW_ANDROID_WESTON_HEIGHT:-900}"
 mkdir -p "$STATE_DIR"
 mkdir -p "$PERSISTENT_STATE_DIR"
 mkdir -p "$LOG_DIR"
-: >"$SUPERVISOR_LOG"
+
+# Keep one previous generation instead of truncating, so the evidence of
+# whatever killed the last run survives the restart that follows it.
+rotate_log() {
+  local file="$1"
+  [[ -f "$file" ]] || return 0
+  mv -f "$file" "$file.old" 2>/dev/null || : >"$file"
+}
+
+rotate_log "$SUPERVISOR_LOG"
 exec >>"$SUPERVISOR_LOG" 2>&1
+
+# Sleep longer after consecutive start failures (capped) so a persistently
+# broken component is retried gently instead of hot-looping every interval.
+backoff_sleep() {
+  local failures="$1"
+  local delay=$((INTERVAL_SECONDS * (1 << (failures > 4 ? 4 : failures))))
+  (( delay > 60 )) && delay=60
+  sleep "$delay"
+}
 
 log() {
   printf '[%(%F %T)T] %s\n' -1 "$*"
@@ -456,7 +475,7 @@ start_weston() {
   LAST_ACTION="start-weston"
   LAST_ERROR=""
   rm -f "$RUNTIME_DIR/$WESTON_SOCKET" "$RUNTIME_DIR/$WESTON_SOCKET.lock"
-  : >"$WESTON_LOG"
+  rotate_log "$WESTON_LOG"
 
   log "Starting nested Weston backend=$WESTON_BACKEND socket=$WESTON_SOCKET"
   local -a weston_args=(
@@ -503,7 +522,7 @@ start_weston() {
 start_waydroid_session() {
   LAST_ACTION="start-session"
   LAST_ERROR=""
-  : >"$SESSION_LOG"
+  rotate_log "$SESSION_LOG"
 
   log "Starting Waydroid session on $WESTON_SOCKET"
   local -a session_env=(
@@ -677,6 +696,9 @@ LAST_ACTION="startup"
 LAST_ERROR=""
 FORCE_ATTACH=1
 ANDROID_HEALTH_FAILURES=0
+ATTACH_FAILURES=0
+WESTON_START_FAILURES=0
+SESSION_START_FAILURES=0
 LAST_CONTAINER_RESTART_AT=0
 
 load_desired_state
@@ -735,11 +757,13 @@ while true; do
 
   if [[ -z "$CURRENT_WESTON_PID" ]]; then
     start_weston || {
+      WESTON_START_FAILURES=$((WESTON_START_FAILURES + 1))
       refresh_health_flags
       write_health
-      sleep "$INTERVAL_SECONDS"
+      backoff_sleep "$WESTON_START_FAILURES"
       continue
     }
+    WESTON_START_FAILURES=0
     refresh_health_flags
     request_force_attach
   fi
@@ -766,11 +790,13 @@ while true; do
     fi
   elif [[ -z "$CURRENT_SESSION_PID" ]]; then
     start_waydroid_session || {
+      SESSION_START_FAILURES=$((SESSION_START_FAILURES + 1))
       refresh_health_flags
       write_health
-      sleep "$INTERVAL_SECONDS"
+      backoff_sleep "$SESSION_START_FAILURES"
       continue
     }
+    SESSION_START_FAILURES=0
     refresh_health_flags
     request_force_attach
   fi
@@ -808,21 +834,25 @@ while true; do
       fi
     fi
 
+    if [[ "$LAST_ATTACH_OK" -eq 1 && "$FORCE_ATTACH" -ne 1 ]] && ! pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' >/dev/null 2>&1; then
+      log "Waydroid UI process disappeared after a successful attach; re-attaching"
+      request_force_attach
+    fi
+
     if [[ "$FORCE_ATTACH" -eq 1 ]]; then
       LAST_ACTION="attach-ui"
-      attach_args=()
-      if [[ "$FORCE_ATTACH" -eq 1 ]]; then
-        attach_args+=(--force)
-      fi
-      if OPENCLAW_ANDROID_WESTON_SOCKET="$WESTON_SOCKET" OPENCLAW_ANDROID_WINDOW_BACKEND="$WINDOW_BACKEND_REQUESTED" \
-        "$PROJECT_ROOT/scripts/ensure_waydroid_ui.sh" "${attach_args[@]}"; then
+      attach_rc=0
+      OPENCLAW_ANDROID_WESTON_SOCKET="$WESTON_SOCKET" OPENCLAW_ANDROID_WINDOW_BACKEND="$WINDOW_BACKEND_REQUESTED" \
+        "$PROJECT_ROOT/scripts/ensure_waydroid_ui.sh" --force || attach_rc=$?
+      if [[ "$attach_rc" -eq 0 ]]; then
         LAST_ATTACH_AT="$(date +%s)"
         LAST_ATTACH_OK=1
         LAST_ERROR=""
         FORCE_ATTACH=0
+        ATTACH_FAILURES=0
       else
         LAST_ATTACH_OK=0
-        attach_rc=$?
+        ATTACH_FAILURES=$((ATTACH_FAILURES + 1))
         if [[ "$attach_rc" -eq 3 ]]; then
           LAST_ERROR="attach-bus-mismatch"
           log "Attach reported a session-bus mismatch; recycling the runtime"
@@ -830,8 +860,18 @@ while true; do
           stop_weston
           refresh_health_flags
           request_force_attach
+          ATTACH_FAILURES=0
+        elif (( ATTACH_FAILURES >= ATTACH_FAILURE_LIMIT )); then
+          LAST_ERROR="attach-failed-recycling"
+          log "Attach failed $ATTACH_FAILURES times in a row (last rc=$attach_rc); recycling the runtime"
+          stop_waydroid_session
+          stop_weston
+          refresh_health_flags
+          request_force_attach
+          ATTACH_FAILURES=0
         else
           LAST_ERROR="attach-failed"
+          log "Attach failed (rc=$attach_rc, attempt $ATTACH_FAILURES/$ATTACH_FAILURE_LIMIT)"
         fi
       fi
     fi

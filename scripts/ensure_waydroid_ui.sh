@@ -17,6 +17,7 @@ ATTACH_LOG="${OPENCLAW_ANDROID_UI_ATTACH_LOG:-$LOG_DIR/ui-attach.log}"
 ATTACH_STAMP_FILE="${OPENCLAW_ANDROID_UI_ATTACH_STAMP_FILE:-$STATE_DIR/ui.attach.stamp}"
 UI_LOCK_FILE="${OPENCLAW_ANDROID_UI_LOCK_FILE:-$STATE_DIR/ui-attach.lock}"
 REATTACH_SECONDS="${OPENCLAW_ANDROID_UI_REATTACH_SECONDS:-30}"
+ATTACH_VERIFY_SECONDS="${OPENCLAW_ANDROID_UI_ATTACH_VERIFY_SECONDS:-15}"
 
 usage() {
   cat <<'EOF'
@@ -82,6 +83,30 @@ ui_process_running() {
   pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' >/dev/null 2>&1
 }
 
+# Prints the Android-side open-window count, or nothing when it cannot be
+# read (no serial, adb unreachable, prop missing). Callers must treat an
+# empty result as "unknown", not as zero.
+android_open_windows() {
+  local serial="${1:-}"
+  [[ -n "$serial" ]] || return 1
+  adb_quick -s "$serial" shell getprop waydroid.open_windows 2>/dev/null | tr -d '\r[:space:]'
+}
+
+# Returns 0 when the UI is verifiably attached: the launcher process is
+# alive and, when Android is reachable, it reports at least one open
+# window. Returns 1 when the launcher process is gone, 2 when Android
+# definitively reports zero open windows.
+ui_attach_verified() {
+  local serial="${1:-}"
+  ui_process_running || return 1
+  local windows
+  windows="$(android_open_windows "$serial" || true)"
+  if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows == 0 )); then
+    return 2
+  fi
+  return 0
+}
+
 attach_stamp_age() {
   [[ -f "$ATTACH_STAMP_FILE" ]] || return 1
   local now last
@@ -127,29 +152,89 @@ apply_device_profile() {
     "$PROJECT_ROOT/scripts/apply_device_profile.sh" >/dev/null 2>&1 || true
 }
 
+stop_stale_ui_processes() {
+  local pids pid
+  pids="$(pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' || true)"
+  [[ -n "$pids" ]] || return 0
+  printf '[%(%F %T)T] Stopping stale Waydroid UI processes: %s\n' -1 "$pids" >>"$ATTACH_LOG"
+  while IFS= read -r pid; do
+    [[ "$pid" =~ ^[0-9]+$ ]] && kill "$pid" 2>/dev/null || true
+  done <<<"$pids"
+  sleep 1
+  pids="$(pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' || true)"
+  while IFS= read -r pid; do
+    [[ "$pid" =~ ^[0-9]+$ ]] && kill -KILL "$pid" 2>/dev/null || true
+  done <<<"$pids"
+}
+
 attach_ui() {
+  local serial="${1:-}"
+
   if ui_process_running; then
-    printf '[%(%F %T)T] SKIP: Waydroid UI process is already running\n' -1 >>"$ATTACH_LOG"
-    touch "$ATTACH_STAMP_FILE"
-    return 0
+    local verify_rc=0
+    ui_attach_verified "$serial" || verify_rc=$?
+    if [[ "$verify_rc" -eq 0 ]]; then
+      printf '[%(%F %T)T] SKIP: Waydroid UI process is already running\n' -1 >>"$ATTACH_LOG"
+      touch "$ATTACH_STAMP_FILE"
+      return 0
+    fi
+    # The launcher is alive but Android reports zero open windows: the
+    # classic false-positive attach. Replace it instead of trusting it.
+    printf '[%(%F %T)T] Waydroid UI process is running but Android reports no open window; relaunching\n' -1 >>"$ATTACH_LOG"
+    stop_stale_ui_processes
   fi
 
-  : >"$UI_LOG"
+  if [[ -f "$UI_LOG" ]]; then
+    mv -f "$UI_LOG" "$UI_LOG.old" 2>/dev/null || : >"$UI_LOG"
+  fi
   {
     printf '[%(%F %T)T] Launching Waydroid UI on %s\n' -1 "$WAYLAND_DISPLAY"
   } >>"$UI_LOG" 2>&1
 
+  # 8>&- keeps the attach lock from leaking into the long-lived UI
+  # process; otherwise the launcher would hold the flock for its entire
+  # lifetime and every later invocation would silently skip as "already
+  # running" even after partial failures.
   env XDG_RUNTIME_DIR="$RUNTIME_DIR" WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
-    setsid -f waydroid show-full-ui >>"$UI_LOG" 2>&1 || true
-  sleep 2
+    setsid -f waydroid show-full-ui >>"$UI_LOG" 2>&1 8>&- || true
 
-  if grep -q "Already tracking a session" "$UI_LOG"; then
-    printf '[%(%F %T)T] ERROR: attach hit a session-bus mismatch\n' -1 >>"$ATTACH_LOG"
-    return 3
-  fi
-  if grep -q "RuntimeError:" "$UI_LOG"; then
-    printf '[%(%F %T)T] ERROR: attach raised a Waydroid runtime error\n' -1 >>"$ATTACH_LOG"
-    return 2
+  local deadline=$((SECONDS + ATTACH_VERIFY_SECONDS))
+  local windows
+  while (( SECONDS < deadline )); do
+    if grep -q "Already tracking a session" "$UI_LOG"; then
+      printf '[%(%F %T)T] ERROR: attach hit a session-bus mismatch\n' -1 >>"$ATTACH_LOG"
+      return 3
+    fi
+    if grep -q "RuntimeError:" "$UI_LOG"; then
+      printf '[%(%F %T)T] ERROR: attach raised a Waydroid runtime error\n' -1 >>"$ATTACH_LOG"
+      return 2
+    fi
+    if ! ui_process_running; then
+      sleep 1
+      # One grace pass so late-written errors are classified above.
+      if grep -qE "Already tracking a session|RuntimeError:" "$UI_LOG"; then
+        continue
+      fi
+      printf '[%(%F %T)T] ERROR: Waydroid UI process exited during attach\n' -1 >>"$ATTACH_LOG"
+      return 4
+    fi
+    windows="$(android_open_windows "$serial" || true)"
+    if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows > 0 )); then
+      break
+    fi
+    if [[ -z "$serial" ]]; then
+      # Android is unreachable over adb; process liveness is the best
+      # verification available.
+      break
+    fi
+    sleep 1
+  done
+
+  local final_rc=0
+  ui_attach_verified "$serial" || final_rc=$?
+  if [[ "$final_rc" -ne 0 ]]; then
+    printf '[%(%F %T)T] ERROR: attach did not produce a visible Android window (rc=%s)\n' -1 "$final_rc" >>"$ATTACH_LOG"
+    return 4
   fi
 
   touch "$ATTACH_STAMP_FILE"
@@ -174,4 +259,4 @@ if [[ -n "$SERIAL" ]]; then
   apply_device_profile "$SERIAL"
 fi
 
-attach_ui
+attach_ui "$SERIAL"
