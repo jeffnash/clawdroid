@@ -280,6 +280,7 @@ refresh_android_health_flags() {
   ANDROID_BOOT_COMPLETED_OK=0
   ANDROID_SYSTEM_SERVER_OK=0
   ANDROID_READY_OK=0
+  ANDROID_OPEN_WINDOWS=""
 
   [[ -n "$CURRENT_ADB_SERIAL" ]] || return 1
   timeout 5s adb connect "$CURRENT_ADB_SERIAL" >/dev/null 2>&1 || true
@@ -297,6 +298,12 @@ refresh_android_health_flags() {
   if [[ "$system_server_pid" =~ ^[0-9]+([[:space:]][0-9]+)*$ ]]; then
     ANDROID_SYSTEM_SERVER_OK=1
   fi
+
+  # Host window count as Android sees it; empty when unreadable. This is
+  # the authoritative "is the UI actually attached" signal, since
+  # `waydroid show-full-ui` is fire-and-forget on session-managed setups.
+  ANDROID_OPEN_WINDOWS="$(timeout 5s adb -s "$CURRENT_ADB_SERIAL" shell getprop waydroid.open_windows 2>/dev/null | tr -d '\r[:space:]' || true)"
+  [[ "$ANDROID_OPEN_WINDOWS" =~ ^[0-9]+$ ]] || ANDROID_OPEN_WINDOWS=""
 
   if [[ "$ANDROID_BOOT_COMPLETED_OK" -eq 1 && "$ANDROID_SYSTEM_SERVER_OK" -eq 1 ]]; then
     ANDROID_READY_OK=1
@@ -387,6 +394,7 @@ write_health() {
     write_kv ANDROID_BOOT_COMPLETED "$ANDROID_BOOT_COMPLETED_OK"
     write_kv ANDROID_SYSTEM_SERVER "$ANDROID_SYSTEM_SERVER_OK"
     write_kv ANDROID_READY "$ANDROID_READY_OK"
+    write_kv ANDROID_OPEN_WINDOWS "${ANDROID_OPEN_WINDOWS:-}"
     write_kv ANDROID_HEALTH_FAILURES "$ANDROID_HEALTH_FAILURES"
     write_kv LAST_CONTAINER_RESTART_AT "$LAST_CONTAINER_RESTART_AT"
     write_kv LAST_ATTACH_AT "$LAST_ATTACH_AT"
@@ -569,6 +577,7 @@ refresh_health_flags() {
   ANDROID_BOOT_COMPLETED_OK=0
   ANDROID_SYSTEM_SERVER_OK=0
   ANDROID_READY_OK=0
+  ANDROID_OPEN_WINDOWS=""
 
   if weston_socket_present; then
     WESTON_SOCKET_OK=1
@@ -699,6 +708,8 @@ ANDROID_HEALTH_FAILURES=0
 ATTACH_FAILURES=0
 WESTON_START_FAILURES=0
 SESSION_START_FAILURES=0
+UI_ZERO_WINDOWS_STREAK=0
+ANDROID_OPEN_WINDOWS=""
 LAST_CONTAINER_RESTART_AT=0
 
 load_desired_state
@@ -834,9 +845,18 @@ while true; do
       fi
     fi
 
-    if [[ "$LAST_ATTACH_OK" -eq 1 && "$FORCE_ATTACH" -ne 1 ]] && ! pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' >/dev/null 2>&1; then
-      log "Waydroid UI process disappeared after a successful attach; re-attaching"
-      request_force_attach
+    # A definitive zero from Android means no host window is attached even
+    # though the session is up. Require two consecutive zero readings so a
+    # transient dip during app transitions does not churn the UI.
+    if [[ "$LAST_ATTACH_OK" -eq 1 && "$FORCE_ATTACH" -ne 1 && "$ANDROID_READY_OK" -eq 1 && "$ANDROID_OPEN_WINDOWS" == "0" ]]; then
+      UI_ZERO_WINDOWS_STREAK=$((UI_ZERO_WINDOWS_STREAK + 1))
+      if (( UI_ZERO_WINDOWS_STREAK >= 2 )); then
+        log "Android reports zero open windows after a successful attach; re-attaching"
+        request_force_attach
+        UI_ZERO_WINDOWS_STREAK=0
+      fi
+    else
+      UI_ZERO_WINDOWS_STREAK=0
     fi
 
     if [[ "$FORCE_ATTACH" -eq 1 ]]; then

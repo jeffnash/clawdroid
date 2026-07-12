@@ -92,13 +92,14 @@ android_open_windows() {
   adb_quick -s "$serial" shell getprop waydroid.open_windows 2>/dev/null | tr -d '\r[:space:]'
 }
 
-# Returns 0 when the UI is verifiably attached: the launcher process is
-# alive and, when Android is reachable, it reports at least one open
-# window. Returns 1 when the launcher process is gone, 2 when Android
-# definitively reports zero open windows.
+# Returns 0 when the UI is verifiably attached. `waydroid show-full-ui`
+# is a fire-and-forget client on session-managed setups (it delegates to
+# the running session and exits), so process liveness proves nothing;
+# Android's own open-window count is the source of truth. Returns 2 when
+# Android definitively reports zero open windows, 0 when it reports at
+# least one or cannot be asked (unknown is not failure).
 ui_attach_verified() {
   local serial="${1:-}"
-  ui_process_running || return 1
   local windows
   windows="$(android_open_windows "$serial" || true)"
   if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows == 0 )); then
@@ -169,19 +170,27 @@ stop_stale_ui_processes() {
 
 attach_ui() {
   local serial="${1:-}"
+  local windows
 
+  # Already showing a window? Nothing to do. When a launcher process is
+  # still around but Android reports zero windows, that is the classic
+  # false-positive attach: replace it instead of trusting it.
+  windows="$(android_open_windows "$serial" || true)"
+  if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows > 0 )); then
+    printf '[%(%F %T)T] SKIP: Android already reports %s open window(s)\n' -1 "$windows" >>"$ATTACH_LOG"
+    touch "$ATTACH_STAMP_FILE"
+    return 0
+  fi
   if ui_process_running; then
-    local verify_rc=0
-    ui_attach_verified "$serial" || verify_rc=$?
-    if [[ "$verify_rc" -eq 0 ]]; then
-      printf '[%(%F %T)T] SKIP: Waydroid UI process is already running\n' -1 >>"$ATTACH_LOG"
+    if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows == 0 )); then
+      printf '[%(%F %T)T] Waydroid UI process is running but Android reports no open window; relaunching\n' -1 >>"$ATTACH_LOG"
+      stop_stale_ui_processes
+    else
+      # A launch is in flight and Android cannot be asked yet; let it be.
+      printf '[%(%F %T)T] SKIP: Waydroid UI launch is already in flight\n' -1 >>"$ATTACH_LOG"
       touch "$ATTACH_STAMP_FILE"
       return 0
     fi
-    # The launcher is alive but Android reports zero open windows: the
-    # classic false-positive attach. Replace it instead of trusting it.
-    printf '[%(%F %T)T] Waydroid UI process is running but Android reports no open window; relaunching\n' -1 >>"$ATTACH_LOG"
-    stop_stale_ui_processes
   fi
 
   if [[ -f "$UI_LOG" ]]; then
@@ -199,7 +208,6 @@ attach_ui() {
     setsid -f waydroid show-full-ui >>"$UI_LOG" 2>&1 8>&- || true
 
   local deadline=$((SECONDS + ATTACH_VERIFY_SECONDS))
-  local windows
   while (( SECONDS < deadline )); do
     if grep -q "Already tracking a session" "$UI_LOG"; then
       printf '[%(%F %T)T] ERROR: attach hit a session-bus mismatch\n' -1 >>"$ATTACH_LOG"
@@ -209,32 +217,24 @@ attach_ui() {
       printf '[%(%F %T)T] ERROR: attach raised a Waydroid runtime error\n' -1 >>"$ATTACH_LOG"
       return 2
     fi
-    if ! ui_process_running; then
-      sleep 1
-      # One grace pass so late-written errors are classified above.
-      if grep -qE "Already tracking a session|RuntimeError:" "$UI_LOG"; then
-        continue
-      fi
-      printf '[%(%F %T)T] ERROR: Waydroid UI process exited during attach\n' -1 >>"$ATTACH_LOG"
-      return 4
+    if [[ -z "$serial" ]]; then
+      # Android is unreachable over adb, so window count cannot be
+      # verified; error-free launch is the best signal available.
+      break
     fi
     windows="$(android_open_windows "$serial" || true)"
     if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows > 0 )); then
       break
     fi
-    if [[ -z "$serial" ]]; then
-      # Android is unreachable over adb; process liveness is the best
-      # verification available.
-      break
-    fi
     sleep 1
   done
 
-  local final_rc=0
-  ui_attach_verified "$serial" || final_rc=$?
-  if [[ "$final_rc" -ne 0 ]]; then
-    printf '[%(%F %T)T] ERROR: attach did not produce a visible Android window (rc=%s)\n' -1 "$final_rc" >>"$ATTACH_LOG"
-    return 4
+  if [[ -n "$serial" ]]; then
+    windows="$(android_open_windows "$serial" || true)"
+    if [[ "$windows" =~ ^[0-9]+$ ]] && (( windows == 0 )); then
+      printf '[%(%F %T)T] ERROR: attach did not produce a visible Android window\n' -1 >>"$ATTACH_LOG"
+      return 4
+    fi
   fi
 
   touch "$ATTACH_STAMP_FILE"
