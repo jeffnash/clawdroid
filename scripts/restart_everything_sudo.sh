@@ -107,6 +107,7 @@ if [[ $FORCE_CONTAINER_RESTART -eq 1 ]]; then
 else
   ensure_container_running
 fi
+ensure_waydroid_network_rules
 
 echo "==> Requesting graphical supervisor reset"
 if run_as_user test -x "$CONTROL_SCRIPT"; then

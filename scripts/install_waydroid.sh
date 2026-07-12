@@ -144,6 +144,14 @@
       else
         sudo_noninteractive_or_plain timeout 90s waydroid container start || warn "failed to start the Waydroid container from setup"
       fi
+      if [[ "$(id -u)" == "0" ]]; then
+        ensure_waydroid_network_rules
+      elif command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1; then
+        sudo -n "$BASH" -c "source '$SCRIPT_DIR/common.sh'; ensure_waydroid_network_rules" ||
+          warn "failed to configure Waydroid network rules"
+      else
+        warn "Waydroid network rules were not checked because passwordless sudo is unavailable"
+      fi
       sleep 2
       if graphical_session_available; then
         log_step "Starting the desktop-session Waydroid supervisor"

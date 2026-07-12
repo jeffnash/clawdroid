@@ -15,6 +15,7 @@ WESTON_SOCKET="${OPENCLAW_ANDROID_WESTON_SOCKET:-wayland-1}"
 UI_LOG="${OPENCLAW_ANDROID_UI_LOG:-$LOG_DIR/waydroid-ui.log}"
 ATTACH_LOG="${OPENCLAW_ANDROID_UI_ATTACH_LOG:-$LOG_DIR/ui-attach.log}"
 ATTACH_STAMP_FILE="${OPENCLAW_ANDROID_UI_ATTACH_STAMP_FILE:-$STATE_DIR/ui.attach.stamp}"
+UI_LOCK_FILE="${OPENCLAW_ANDROID_UI_LOCK_FILE:-$STATE_DIR/ui-attach.lock}"
 REATTACH_SECONDS="${OPENCLAW_ANDROID_UI_REATTACH_SECONDS:-30}"
 
 usage() {
@@ -45,6 +46,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 require_cmd adb
+require_cmd flock
 require_cmd gdbus
 require_cmd waydroid
 
@@ -54,6 +56,12 @@ require_cmd waydroid
 mkdir -p "$STATE_DIR"
 mkdir -p "$PERSISTENT_STATE_DIR"
 mkdir -p "$LOG_DIR"
+
+exec 8>"$UI_LOCK_FILE"
+if ! flock -n 8; then
+  printf '[%(%F %T)T] SKIP: another Waydroid UI attach is already running\n' -1 >>"$ATTACH_LOG"
+  exit 0
+fi
 
 export XDG_RUNTIME_DIR="$RUNTIME_DIR"
 export WAYLAND_DISPLAY="$WESTON_SOCKET"
@@ -68,6 +76,10 @@ session_bus_ready() {
     --dest id.waydro.Session \
     --object-path /SessionManager \
     --method org.freedesktop.DBus.Introspectable.Introspect >/dev/null 2>&1
+}
+
+ui_process_running() {
+  pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' >/dev/null 2>&1
 }
 
 attach_stamp_age() {
@@ -116,6 +128,12 @@ apply_device_profile() {
 }
 
 attach_ui() {
+  if ui_process_running; then
+    printf '[%(%F %T)T] SKIP: Waydroid UI process is already running\n' -1 >>"$ATTACH_LOG"
+    touch "$ATTACH_STAMP_FILE"
+    return 0
+  fi
+
   : >"$UI_LOG"
   {
     printf '[%(%F %T)T] Launching Waydroid UI on %s\n' -1 "$WAYLAND_DISPLAY"
@@ -156,4 +174,4 @@ if [[ -n "$SERIAL" ]]; then
   apply_device_profile "$SERIAL"
 fi
 
-attach_ui "$SERIAL"
+attach_ui

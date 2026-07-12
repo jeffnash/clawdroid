@@ -111,6 +111,38 @@ waydroid_ip_address() {
   waydroid_status_field "IP address:" | cut -d/ -f1
 }
 
+ensure_waydroid_network_rules() {
+  local subnet="${OPENCLAW_ANDROID_WAYDROID_SUBNET:-192.168.240.0/24}"
+  local bridge="${OPENCLAW_ANDROID_WAYDROID_BRIDGE:-waydroid0}"
+
+  if [[ "$(id -u)" != "0" ]]; then
+    warn "Skipping Waydroid network rule setup because root privileges are required"
+    return 0
+  fi
+  if ! command -v iptables >/dev/null 2>&1; then
+    warn "Skipping Waydroid network rule setup because iptables is unavailable"
+    return 0
+  fi
+
+  sysctl -w net.ipv4.ip_forward=1 >/dev/null 2>&1 ||
+    warn "Failed to enable IPv4 forwarding for Waydroid"
+
+  if ! iptables -t nat -C POSTROUTING -s "$subnet" ! -o "$bridge" -j MASQUERADE >/dev/null 2>&1; then
+    iptables -t nat -A POSTROUTING -s "$subnet" ! -o "$bridge" -j MASQUERADE ||
+      warn "Failed to add Waydroid NAT masquerade rule"
+  fi
+
+  if ! iptables -C FORWARD -i "$bridge" -j ACCEPT >/dev/null 2>&1; then
+    iptables -A FORWARD -i "$bridge" -j ACCEPT ||
+      warn "Failed to add Waydroid outbound forwarding rule"
+  fi
+
+  if ! iptables -C FORWARD -o "$bridge" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT >/dev/null 2>&1; then
+    iptables -A FORWARD -o "$bridge" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT ||
+      warn "Failed to add Waydroid return forwarding rule"
+  fi
+}
+
 restart_openclaw_gateway_if_running() {
   if ! command -v systemctl >/dev/null 2>&1; then
     return 0

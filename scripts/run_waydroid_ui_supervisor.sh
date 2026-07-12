@@ -389,8 +389,32 @@ wait_for_pid_exit() {
   return 1
 }
 
+stop_waydroid_ui() {
+  local pids pid
+  pids="$(pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' || true)"
+  [[ -n "$pids" ]] || return 0
+
+  LAST_ACTION="stop-ui"
+  log "Stopping Waydroid UI processes: $pids"
+  while IFS= read -r pid; do
+    [[ "$pid" =~ ^[0-9]+$ ]] && kill "$pid" 2>/dev/null || true
+  done <<<"$pids"
+
+  local deadline=$((SECONDS + 3))
+  while (( SECONDS < deadline )); do
+    pids="$(pgrep -u "$(id -u)" -f '[/]waydroid show-full-ui' || true)"
+    [[ -z "$pids" ]] && return 0
+    sleep 1
+  done
+
+  while IFS= read -r pid; do
+    [[ "$pid" =~ ^[0-9]+$ ]] && kill -KILL "$pid" 2>/dev/null || true
+  done <<<"$pids"
+}
+
 stop_waydroid_session() {
   local pid
+  stop_waydroid_ui
   pid="$(find_session_pid || true)"
 
   if [[ -n "$pid" ]] || waydroid_running; then
@@ -666,6 +690,13 @@ while true; do
   handle_requests
 
   if ! parent_display_ready; then
+    existing_weston_pid="$(find_weston_pid || true)"
+    existing_session_pid="$(find_session_pid || true)"
+    if [[ -n "$existing_weston_pid" || -n "$existing_session_pid" || -S "$RUNTIME_DIR/$WESTON_SOCKET" ]]; then
+      log "Parent desktop display is unavailable; stopping owned Waydroid runtime"
+      stop_waydroid_session
+      stop_weston
+    fi
     LAST_ACTION="wait-display"
     LAST_ERROR="${WESTON_BACKEND}-display-not-ready"
     CURRENT_WESTON_PID=""
