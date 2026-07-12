@@ -64,9 +64,42 @@ Then run Clawdroid setup as the agent user:
 
 Add `--install-openclaw` and `--enable-admin-tool` if this host is for OpenClaw.
 
+## Check Host Kernel Guards First
+
+Some hosts carry "reboot on any kernel problem" sysctl guards (often left
+behind by earlier debugging). `kernel.panic_on_warn=1` is the dangerous one:
+any benign kernel WARNING instantly panics and reboots the host, and **Weston
+reliably triggers such a WARNING on kernel 6.17+** (an executable mmap probe
+hits the `path_noexec` warning). On a guarded host that autostarts the
+display stack, that produces an infinite boot → Weston → panic → reboot loop
+roughly every 45 seconds, and the machine becomes almost unreachable over
+SSH. This exact failure took down a production Clawdroid host in July 2026.
+
+`./doctor.sh` fails loudly when it sees `panic_on_warn=1` and warns about
+recent kernel panic dumps in pstore. To fix it persistently:
+
+```bash
+./scripts/install_headless_display.sh --fix-kernel-guards
+```
+
 ## Start A Virtual Display
 
-For a simple headless host, start Xvfb on `:99`:
+Use the installer; it creates a supervised user service for Xvfb, persists
+`DISPLAY` for boot-time user units via `~/.config/environment.d/`, and checks
+the kernel guards described above:
+
+```bash
+./scripts/install_headless_display.sh --now
+./scripts/install_user_service.sh --headless
+```
+
+`--headless` rebinds the UI supervisor unit to `default.target` (a headless
+host never activates `graphical-session.target`) and bakes `DISPLAY` into the
+unit, so everything starts at boot with lingering enabled. Override the
+display or geometry with `OPENCLAW_ANDROID_DISPLAY` and
+`OPENCLAW_ANDROID_HEADLESS_RESOLUTION`.
+
+Manual alternative for a throwaway host:
 
 ```bash
 export DISPLAY=:99
@@ -76,11 +109,6 @@ mkdir -p "$XDG_RUNTIME_DIR"
 chmod 700 "$XDG_RUNTIME_DIR"
 
 Xvfb :99 -screen 0 1600x900x24 -nolisten tcp >/tmp/clawdroid-xvfb.log 2>&1 &
-```
-
-Import that display into the user service environment:
-
-```bash
 systemctl --user import-environment DISPLAY XDG_RUNTIME_DIR
 ```
 
@@ -90,6 +118,11 @@ If the host does not already have a user DBus session, start one before running 
 export DBUS_SESSION_BUS_ADDRESS="$(dbus-daemon --session --fork --print-address)"
 systemctl --user import-environment DBUS_SESSION_BUS_ADDRESS
 ```
+
+If you run a full desktop session (e.g. XFCE) on the virtual display instead
+of bare Xvfb — for example to get a Secret Service keyring — disable its
+power manager and screensaver in that session; a desktop power manager on a
+headless display can suspend the whole host.
 
 ## Start Clawdroid
 
@@ -112,27 +145,10 @@ curl http://127.0.0.1:48765/v1/status | jq
 
 ## Keep It Running
 
-For long-lived headless hosts, create a small user service for Xvfb instead of starting it by hand. Example:
-
-```ini
-[Unit]
-Description=Clawdroid virtual X display
-
-[Service]
-ExecStart=/usr/bin/Xvfb :99 -screen 0 1600x900x24 -nolisten tcp
-Restart=always
-
-[Install]
-WantedBy=default.target
-```
-
-Save it as `~/.config/systemd/user/clawdroid-xvfb.service`, then:
-
-```bash
-systemctl --user daemon-reload
-systemctl --user enable --now clawdroid-xvfb.service
-systemctl --user import-environment DISPLAY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS
-```
+`scripts/install_headless_display.sh` already installs the supervised Xvfb
+unit (`clawdroid-headless-display.service`, `Restart=always`) and the
+`environment.d` entry that user units need at boot, so there is nothing else
+to hand-roll.
 
 If the user service manager is not active after logout, enable lingering:
 

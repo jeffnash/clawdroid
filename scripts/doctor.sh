@@ -234,6 +234,37 @@ check_user_service() {
   fi
 }
 
+check_kernel_guards() {
+  local panic_on_warn hung_task_panic softlockup_panic
+  panic_on_warn="$(cat /proc/sys/kernel/panic_on_warn 2>/dev/null || true)"
+  hung_task_panic="$(cat /proc/sys/kernel/hung_task_panic 2>/dev/null || true)"
+  softlockup_panic="$(cat /proc/sys/kernel/softlockup_panic 2>/dev/null || true)"
+
+  if [[ "$panic_on_warn" == "1" ]]; then
+    add_result fail "host.kernel_panic_on_warn" "kernel.panic_on_warn=1 will reboot this host on any benign kernel WARNING" "Weston triggers a path_noexec WARN on kernel >= 6.17, producing an infinite boot->panic->reboot loop (~45s cycle). Disable it: scripts/install_headless_display.sh --fix-kernel-guards, or set kernel.panic_on_warn=0 in /etc/sysctl.d"
+  elif [[ -n "$panic_on_warn" ]]; then
+    add_result pass "host.kernel_panic_on_warn" "kernel.panic_on_warn=0"
+  fi
+  if [[ "$hung_task_panic" == "1" ]]; then
+    add_result warn "host.kernel_hung_task_panic" "kernel.hung_task_panic=1 can reboot this host on long-but-harmless IO waits"
+  fi
+  if [[ "$softlockup_panic" == "1" ]]; then
+    add_result info "host.kernel_softlockup_panic" "kernel.softlockup_panic=1 (host reboots on real lockups; intentional on some hosts)"
+  fi
+
+  # Recent preserved panic dumps mean the host has actually been crashing;
+  # surface that instead of letting silent reboots pass unnoticed.
+  local pstore_recent=""
+  pstore_recent="$(find /var/lib/systemd/pstore /sys/fs/pstore -mindepth 1 -maxdepth 1 -mtime -7 2>/dev/null | head -5 || true)"
+  if [[ -n "$pstore_recent" ]]; then
+    local count
+    count="$(printf '%s\n' "$pstore_recent" | wc -l)"
+    add_result warn "host.recent_kernel_panics" "kernel panic dumps from the last 7 days exist in pstore" "examples: $(printf '%s ' $pstore_recent)(rerun as root for the full count; each entry is one crash)"
+  elif [[ -d /var/lib/systemd/pstore || -d /sys/fs/pstore ]]; then
+    add_result pass "host.recent_kernel_panics" "no readable kernel panic dumps from the last 7 days"
+  fi
+}
+
 check_host() {
   add_result info "host.user" "checking as $TARGET_USER" "uid=$TARGET_UID home=$TARGET_HOME"
   add_result info "host.project" "$PROJECT_ROOT"
@@ -244,6 +275,7 @@ check_host() {
   fi
   check_disk_path root / 20 8
   check_disk_path waydroid /var/lib/waydroid 20 8
+  check_kernel_guards
 }
 
 check_commands() {
