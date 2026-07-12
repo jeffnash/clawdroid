@@ -39,17 +39,28 @@ export function responseErrorMessage(response, body) {
   return `HTTP ${response.status} ${response.statusText}`;
 }
 
+// Node fetch has no default timeout, so a wedged daemon would hang the
+// agent's tool call forever. Agent dispatches are interactive; admin
+// dispatches include long installs (extras can take tens of minutes).
+const AGENT_TIMEOUT_MS = 300_000;
+const ADMIN_TIMEOUT_MS = 2_000_000;
+
 export function createDaemonClient(baseUrl) {
   const normalized = normalizeBaseUrl(baseUrl);
 
-  async function request(path, payload) {
+  async function request(path, payload, defaultTimeoutMs) {
+    const timeoutMs =
+      Number.isFinite(payload?.timeout_ms) && payload.timeout_ms > 0
+        ? payload.timeout_ms
+        : defaultTimeoutMs;
     try {
       const res = await fetch(`${normalized}${path}`, {
         method: "POST",
         headers: {
           "content-type": "application/json"
         },
-        body: JSON.stringify(payload ?? {})
+        body: JSON.stringify(payload ?? {}),
+        signal: AbortSignal.timeout(timeoutMs)
       });
 
       const body = await parseJsonOrRaw(res);
@@ -65,6 +76,13 @@ export function createDaemonClient(baseUrl) {
 
       return body;
     } catch (error) {
+      if (error?.name === "TimeoutError" || error?.name === "AbortError") {
+        return {
+          ok: false,
+          error: `Clawdroid daemon did not respond within ${Math.round(timeoutMs / 1000)}s at ${normalized}`,
+          path
+        };
+      }
       const message = error?.message ? `${error.name || "Error"}: ${error.message}` : String(error);
       return {
         ok: false,
@@ -76,10 +94,10 @@ export function createDaemonClient(baseUrl) {
 
   return {
     dispatchAgent(payload) {
-      return request("/v1/agent/dispatch", payload);
+      return request("/v1/agent/dispatch", payload, AGENT_TIMEOUT_MS);
     },
     dispatchAdmin(payload) {
-      return request("/v1/admin/dispatch", payload);
+      return request("/v1/admin/dispatch", payload, ADMIN_TIMEOUT_MS);
     }
   };
 }

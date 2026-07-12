@@ -149,7 +149,14 @@ class RuntimeSafetyTests(unittest.TestCase):
 
     def test_coordinate_tap_on_protected_control_is_blocked_without_approval(self) -> None:
         runtime = self.make_runtime(require_action_approval=True)
-        protected = make_node("buy", label="Place your order")
+        # The real bridge returns plain dicts, not NodeHandle objects; the
+        # guard must work against exactly that shape.
+        protected = {
+            "text": "Place your order",
+            "content_desc": "",
+            "hint_text": "",
+            "bounds": [0, 0, 100, 80],
+        }
         with (
             patch.object(runtime, "ensure_bridge_ready", return_value={"ok": True}),
             patch.object(runtime, "_bridge_tree_nodes", return_value=([protected], {"ok": True})),
@@ -159,7 +166,27 @@ class RuntimeSafetyTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertIn("Protected coordinate action blocked", result["error"])
+        self.assertEqual(result["protected"]["token"], "place your order")
+        self.assertEqual(result["protected"]["label"], "Place your order")
         tap.assert_not_called()
+
+    def test_coordinate_tap_outside_protected_control_is_allowed(self) -> None:
+        runtime = self.make_runtime(require_action_approval=True)
+        protected = {
+            "text": "Place your order",
+            "content_desc": "",
+            "hint_text": "",
+            "bounds": [0, 0, 100, 80],
+        }
+        with (
+            patch.object(runtime, "ensure_bridge_ready", return_value={"ok": True}),
+            patch.object(runtime, "_bridge_tree_nodes", return_value=([protected], {"ok": True})),
+            patch.object(runtime.waydroid, "tap", return_value={"ok": True}) as tap,
+        ):
+            result = runtime.coordinate_act("tap", x=500, y=400)
+
+        self.assertTrue(result["ok"])
+        tap.assert_called_once_with(500, 400)
 
     def test_coordinate_tap_on_protected_control_can_use_explicit_approval(self) -> None:
         runtime = self.make_runtime(require_action_approval=True)

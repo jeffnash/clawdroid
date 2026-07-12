@@ -20,7 +20,7 @@ daemon-venv:
 	python3 -m venv python-daemon/.venv && python-daemon/.venv/bin/pip install -U pip && python-daemon/.venv/bin/pip install -r python-daemon/requirements.txt
 
 daemon-run:
-	python-daemon/.venv/bin/python -m openclaw_android_daemon.main --host 127.0.0.1 --port 48765
+	cd python-daemon && .venv/bin/python -m openclaw_android_daemon.main --host 127.0.0.1 --port 48765
 
 build-apk:
 	./scripts/build_companion_apk.sh

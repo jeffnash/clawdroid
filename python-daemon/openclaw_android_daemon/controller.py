@@ -715,7 +715,19 @@ class AndroidRuntime:
             return {"ok": False, "error": "extras list is empty"}
         if uninstall:
             return {"ok": False, "error": "Extras uninstall is not implemented by the waydroid_script wrapper in this project."}
-        proc = subprocess.run([str(script), "--extras", joined], capture_output=True, text=True)
+        try:
+            proc = subprocess.run(
+                [str(script), "--extras", joined],
+                capture_output=True,
+                text=True,
+                timeout=1800.0,
+            )
+        except subprocess.TimeoutExpired:
+            return {
+                "ok": False,
+                "error": "Extras installation timed out after 30 minutes.",
+                "extras": extras,
+            }
         return {
             "ok": proc.returncode == 0,
             "stdout": (proc.stdout or "").strip(),
@@ -775,7 +787,13 @@ class AndroidRuntime:
         }
 
     def configure_bridge(self, allowed_packages: list[str]) -> dict[str, Any]:
-        result = self.bridge.configure(allowed_packages)
+        bridge = self.bridge
+        if bridge is None:
+            return {
+                "ok": False,
+                "error": "Android bridge is unavailable (no Waydroid ADB serial). Start Waydroid and retry.",
+            }
+        result = bridge.configure(allowed_packages)
         self.settings.allowed_packages = list(allowed_packages)
         return result
 
@@ -1191,7 +1209,7 @@ class AndroidRuntime:
         except Exception as exc:
             self._invalidate_bridge()
             shot_path: str | None = None
-            shot = self.settings.screenshot_dir / f"snapshot_bridge_error_{now_ms()}.png"
+            shot = self._screenshot_path("snapshot_bridge_error")
             self.ensure_bridge_ready()
             shot_result = self.waydroid.screenshot(shot)
             if shot_result.get("ok"):
@@ -1230,7 +1248,7 @@ class AndroidRuntime:
         screenshot_path: str | None = None
         capture_screenshot = include_screenshot or auto_screenshot
         if capture_screenshot:
-            shot = self.settings.screenshot_dir / f"snapshot_{now_ms()}.png"
+            shot = self._screenshot_path("snapshot")
             self.ensure_bridge_ready()
             shot_result = self.waydroid.screenshot(shot)
             if shot_result.get("ok"):
@@ -1288,7 +1306,7 @@ class AndroidRuntime:
 
     def screenshot(self) -> dict[str, Any]:
         self.ensure_bridge_ready()
-        shot = self.settings.screenshot_dir / f"screenshot_{now_ms()}.png"
+        shot = self._screenshot_path("screenshot")
         shot_result = self.waydroid.screenshot(shot)
         if not shot_result.get("ok"):
             return {
@@ -1304,8 +1322,38 @@ class AndroidRuntime:
         }
 
 
+    def _prune_screenshots(self, keep: int = 100) -> None:
+        # Screenshots accumulate one PNG per capture forever otherwise;
+        # keep the most recent `keep` and drop the rest.
+        try:
+            shots = sorted(
+                self.settings.screenshot_dir.glob("*.png"),
+                key=lambda path: path.stat().st_mtime,
+                reverse=True,
+            )
+            for stale in shots[keep:]:
+                stale.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+    def _screenshot_path(self, prefix: str) -> Path:
+        self._prune_screenshots()
+        return self.settings.screenshot_dir / f"{prefix}_{now_ms()}.png"
+
     def _protected_action_block(self, handle) -> str | None:
         label = f"{handle.text} {handle.content_desc} {handle.hint_text}".strip().lower()
+        for token in self.settings.protected_texts:
+            if token in label:
+                return token
+        return None
+
+    def _protected_token_for_bridge_node(self, node: dict[str, Any]) -> str | None:
+        # Raw bridge nodes are plain dicts (no NodeHandle attributes yet).
+        label = " ".join(
+            str(node.get(key) or "") for key in ("text", "content_desc", "hint_text")
+        ).strip().lower()
+        if not label:
+            return None
         for token in self.settings.protected_texts:
             if token in label:
                 return token
@@ -1349,20 +1397,25 @@ class AndroidRuntime:
             }
 
         candidates = []
-        for handle in nodes:
-            token = self._protected_action_block(handle)
+        for node in nodes:
+            token = self._protected_token_for_bridge_node(node)
             if not token:
                 continue
-            if any(self._point_in_bounds(px, py, handle.bounds) for px, py in points):
-                candidates.append((self._bounds_area(handle.bounds), token, handle))
+            bounds = node.get("bounds")
+            if any(self._point_in_bounds(px, py, bounds) for px, py in points):
+                candidates.append((self._bounds_area(bounds), token, node))
         if not candidates:
             return None
-        _area, token, handle = min(candidates, key=lambda item: item[0])
+        _area, token, node = min(candidates, key=lambda item: item[0])
+        label = next(
+            (str(node.get(key)) for key in ("text", "content_desc", "hint_text") if node.get(key)),
+            "",
+        )
         return {
             "token": token,
-            "ref": handle.ref,
-            "label": handle.primary_label(),
-            "bounds": handle.bounds,
+            "ref": node.get("ref"),
+            "label": label,
+            "bounds": node.get("bounds"),
         }
 
     def _require_snapshot(self, snapshot_id: str) -> SnapshotState:

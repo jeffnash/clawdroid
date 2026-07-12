@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 import re
+import subprocess
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -185,7 +186,15 @@ class WaydroidManager:
         serial = self.adb_serial()
         if not serial:
             return {"ok": False, "error": "Unable to determine Waydroid ADB serial."}
-        proc = run_cmd(["adb", "-s", serial, "shell", *args], check=False, timeout=timeout)
+        try:
+            proc = run_cmd(["adb", "-s", serial, "shell", *args], check=False, timeout=timeout)
+        except subprocess.TimeoutExpired:
+            return {
+                "ok": False,
+                "serial": serial,
+                "error": f"adb shell timed out after {timeout}s",
+                "returncode": -1,
+            }
         return {
             "ok": proc.returncode == 0,
             "serial": serial,
@@ -198,7 +207,15 @@ class WaydroidManager:
         serial = self.adb_serial()
         if not serial:
             return {"ok": False, "error": "Unable to determine Waydroid ADB serial."}
-        proc = run_cmd(["adb", "-s", serial, *args], check=False, timeout=timeout, text=text)
+        try:
+            proc = run_cmd(["adb", "-s", serial, *args], check=False, timeout=timeout, text=text)
+        except subprocess.TimeoutExpired:
+            return {
+                "ok": False,
+                "serial": serial,
+                "error": f"adb timed out after {timeout}s",
+                "returncode": -1,
+            }
         return {
             "ok": proc.returncode == 0,
             "serial": serial,

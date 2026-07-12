@@ -49,6 +49,10 @@ if [[ ! -x "$PROJECT_ROOT/python-daemon/.venv/bin/python" ]]; then
   "$PROJECT_ROOT/python-daemon/.venv/bin/pip" install -r "$PROJECT_ROOT/python-daemon/requirements.txt"
 fi
 
+# The daemon package is run in-place, so the working directory must be
+# python-daemon/ for `-m openclaw_android_daemon.main` to be importable
+# (this matches WorkingDirectory= in the systemd unit).
+cd "$PROJECT_ROOT/python-daemon"
 exec "$PROJECT_ROOT/python-daemon/.venv/bin/python" \
   -m openclaw_android_daemon.main \
   --host "$DAEMON_HOST" \
